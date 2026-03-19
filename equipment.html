@@ -10,14 +10,30 @@
   <header>
     <div class="header-inner">
       <h1>研究室の設備</h1>
-      <p class="subtitle">PC・印刷機・ネットワーク</p>
+      <p class="subtitle">PC・印刷機・ネットワーク・開発ツール</p>
     </div>
   </header>
   <div class="subpage">
     <a href="index.html" class="back-link">&larr; ホームに戻る</a>
 
+    <!-- ===== 研究室PC ===== -->
     <section>
-      <h2>印刷機の設定</h2>
+      <h2>研究室PC</h2>
+      <ul>
+        <li>研究室のPCは <strong>Ubuntu (Linux)</strong> がメインOS</li>
+        <li>ユーザー名・パスワードは先輩または先生から直接聞いてください（本サイトには掲載しません）</li>
+        <li>ハンガーは右から3番目のロッカーにあります</li>
+      </ul>
+      <div class="note">
+        <h4>電気について</h4>
+        <p>研究室の電気スイッチは古いタイプのボタン式です。場所がわからなければ先輩に聞いてください。</p>
+      </div>
+    </section>
+
+    <!-- ===== 印刷機の設定 ===== -->
+    <section>
+      <h2>印刷機の設定（Linux）</h2>
+      <p>研究室の印刷機を Linux PC から使うための手順です。</p>
       <ol>
         <li><code>linux-lipslx-drv-v610-jp-00</code> というドライバーをネットでダウンロードする</li>
         <li>ダウンロードしたフォルダに移動してインストールスクリプトを実行する：
@@ -25,25 +41,209 @@
 sudo ./install.sh</code></pre>
         </li>
         <li>設定ウィンドウが開くので、プリンター名を追加する</li>
+        <li>プリンターのIPアドレスは先輩に確認してください</li>
+      </ol>
+      <div class="note">
+        <h4>トラブルシューティング</h4>
+        <p>印刷できない場合は、プリンターの電源が入っているか・ネットワークに接続されているかを確認してください。</p>
+      </div>
+    </section>
+
+    <!-- ===== SSH / VPN ===== -->
+    <section>
+      <h2>SSH / VPN</h2>
+      <h3>SSH鍵の設定</h3>
+      <ol>
+        <li>鍵ペアを生成する（鍵の名前に接続先サーバ名を入れておくと管理しやすい）：
+          <pre><code>ssh-keygen -t ed25519</code></pre>
+        </li>
+        <li>公開鍵・秘密鍵は <code>~/.ssh/</code> に置く</li>
+        <li>公開鍵をサーバーに送信し、<code>authorized_keys</code> に追加する</li>
+        <li><code>~/.ssh/config</code> にサーバーの接続設定を書く：
+          <pre><code>Host サーバ名
+    HostName 接続先アドレス
+    User ユーザー名
+    IdentitiesOnly yes
+    IdentityFile ~/.ssh/秘密鍵ファイル名</code></pre>
+        </li>
+        <li>これで <code>ssh サーバ名</code> だけで接続できるようになる</li>
+      </ol>
+
+      <h3>VPN</h3>
+      <ul>
+        <li>学外から大学ネットワークにアクセスする場合はVPNが必要</li>
+        <li>VPNの設定方法は大学の情報基盤センターのページを参照</li>
+      </ul>
+
+      <h3>Tailscale（VPNツール）</h3>
+      <p>研究室では <strong>Tailscale</strong> を使ってリモートSSH接続することもあります。</p>
+      <ol>
+        <li>各PCで Tailscale をインストールし、同じアカウントでログインする</li>
+        <li>Tailscale を起動する
+          <ul>
+            <li>Ubuntu: <code>sudo tailscale up</code></li>
+            <li>Windows: アプリを開いて起動</li>
+          </ul>
+        </li>
+        <li>SSHしたいサーバのVPN上のIPアドレスをコピーして接続する</li>
       </ol>
     </section>
 
+    <!-- ===== VSCode ===== -->
     <section>
-      <h2>SSH / VPN</h2>
+      <h2>VSCode（エディタ）</h2>
+      <p>研究室での開発には主に <strong>Visual Studio Code</strong> を使います。</p>
+
+      <h3>基本知識</h3>
       <ul>
-        <li>公開鍵・秘密鍵は <code>~/.ssh/</code> に置く</li>
-        <li><code>~/.ssh/config</code> にサーバーの接続設定を書く</li>
-        <li>鍵の生成: <code>ssh-keygen -t ed25519</code></li>
-        <li>学外から大学ネットワークにアクセスする場合はVPNが必要</li>
+        <li>VSCode はWindows上のソフトウェア</li>
+        <li>WSL上の Ubuntu でも開けるのは、Ubuntu上にサーバーを置いて接続しているため</li>
+        <li><strong>Remote-SSH</strong> 拡張機能を使えば、研究室サーバにSSH接続してリモート開発できる</li>
+      </ul>
+
+      <h3>便利なショートカットキー</h3>
+      <table>
+        <thead>
+          <tr><th>ショートカット</th><th>動作</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Ctrl + Alt + V</code></td><td>VSCodeを開く</td></tr>
+          <tr><td><code>Ctrl + Alt + S</code></td><td>Remote-SSH接続</td></tr>
+          <tr><td><code>Ctrl + Alt + W</code></td><td>WSL接続</td></tr>
+          <tr><td><code>Ctrl + Alt + Q</code></td><td>接続を切る</td></tr>
+          <tr><td><code>Ctrl + Alt + C</code></td><td>そのファイルのフォルダに cd</td></tr>
+          <tr><td><code>Ctrl + K → S</code></td><td>キーバインド設定を開く</td></tr>
+        </tbody>
+      </table>
+
+      <h3>設定ファイル</h3>
+      <ul>
+        <li><code>settings.json</code> で拡張機能やエディタの設定を記述できる</li>
+        <li><code>&gt; Open Remote Setting</code> でリモート用設定を開ける</li>
+        <li><code>Open Default Setting</code> で全設定（約8000行）が開く</li>
+        <li><code>Open User Setting</code> でGUIの設定画面が開く</li>
       </ul>
     </section>
 
+    <!-- ===== tmux ===== -->
+    <section>
+      <h2>tmux（ターミナル多重化ツール）</h2>
+      <p>tmux は、1つのターミナル（特にSSH接続）上で複数の仮想端末を管理できるツールです。研究で長時間かかる処理を実行するときに必須です。</p>
+
+      <h3>tmuxでできること</h3>
+      <ul>
+        <li>SSH接続が切れてもプログラムを実行し続けられる</li>
+        <li>複数の作業画面（タブのようなもの）を切り替えられる</li>
+        <li>画面を分割して同時に複数の作業ができる</li>
+        <li>作業状態を保持したまま離脱（detach）し、後で再接続できる</li>
+      </ul>
+
+      <div class="note">
+        <h4>重要な注意点</h4>
+        <p>tmux は「SSH切断に強い」だけです。ローカルPCをスリープすると処理は止まります。長時間処理は必ず<strong>スリープしないマシン（サーバ）</strong>上で実行してください。</p>
+      </div>
+
+      <h3>3階層構造</h3>
+      <table>
+        <thead>
+          <tr><th>概念</th><th>説明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>セッション</strong></td><td>作業単位の一番大きな枠。SSH切断しても残る。最も重要な概念</td></tr>
+          <tr><td><strong>ウィンドウ</strong></td><td>タブのようなもの。用途ごとに分ける（run, log, monitor など）</td></tr>
+          <tr><td><strong>ペイン</strong></td><td>ウィンドウ内を上下・左右に分割した画面</td></tr>
+        </tbody>
+      </table>
+
+      <h3>長時間処理の実行手順</h3>
+      <ol>
+        <li>SSH先のサーバ上で tmux セッションを作成する</li>
+        <li>セッション内でプログラムを実行する</li>
+        <li>detach して SSH を切断する（exit ではなく detach が正解）</li>
+        <li>後で再接続して結果を確認する</li>
+      </ol>
+
+      <h3>操作ごとの結果</h3>
+      <table>
+        <thead>
+          <tr><th>操作</th><th>結果</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>detach</td><td>セッションは残る（安全）</td></tr>
+          <tr><td>exit</td><td>そのウィンドウの bash が終了。最後のウィンドウならセッションも終了</td></tr>
+          <tr><td>SSH 切断</td><td>tmux があれば問題なし</td></tr>
+          <tr><td>ローカルPC スリープ</td><td>処理は<strong>必ず止まる</strong></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== シェル ===== -->
+    <section>
+      <h2>シェルの基本</h2>
+      <ul>
+        <li><code>cd ..</code> で親ディレクトリに移動</li>
+        <li><code>code ファイル名 -n</code> で新しいウィンドウでVSCodeを開く</li>
+        <li>エイリアス（コマンドの短縮名）は <code>~/.bashrc</code> に設定する</li>
+      </ul>
+    </section>
+
+    <!-- ===== Git / GitHub ===== -->
+    <section>
+      <h2>Git / GitHub</h2>
+      <p>研究室のソースコードは Git で管理し、GitHub で共有します。</p>
+
+      <h3>GitHubへのSSH接続</h3>
+      <ol>
+        <li>SSH鍵を生成する（GitHub用だとわかる名前にする）</li>
+        <li>公開鍵を GitHub にアップロードする</li>
+        <li><code>~/.ssh/config</code> に設定を記述する</li>
+        <li>接続テスト: <code>ssh -T git@github.com</code></li>
+      </ol>
+      <p>clone するときは SSH の URL を使う。HTTPS にしてしまった場合：</p>
+      <pre><code>git remote set-url origin git@github.com:ユーザー名/リポジトリ.git</code></pre>
+
+      <h3>よく使う Git コマンド</h3>
+      <table>
+        <thead>
+          <tr><th>コマンド</th><th>説明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>git status</code></td><td>変更状態を確認</td></tr>
+          <tr><td><code>git add ファイル名</code></td><td>ステージング</td></tr>
+          <tr><td><code>git commit -m "メッセージ"</code></td><td>コミット</td></tr>
+          <tr><td><code>git push</code></td><td>リモートに送信</td></tr>
+          <tr><td><code>git pull</code></td><td>リモートから取得・統合</td></tr>
+          <tr><td><code>git log</code></td><td>コミット履歴を表示</td></tr>
+          <tr><td><code>git remote -v</code></td><td>リモートURLを確認</td></tr>
+        </tbody>
+      </table>
+
+      <h3>設定ファイル</h3>
+      <ul>
+        <li><code>~/.gitconfig</code> にエイリアスやアカウントの設定が書いてある</li>
+      </ul>
+    </section>
+
+    <!-- ===== 設定ファイルの場所 ===== -->
     <section>
       <h2>設定ファイルの場所</h2>
       <ul>
-        <li>ホームディレクトリ (<code>~</code>) に各種設定ファイルがある（<code>.bashrc</code>, <code>.vimrc</code>, <code>.gitconfig</code> など）</li>
+        <li>ホームディレクトリ (<code>~</code>) に各種設定ファイルがある</li>
+        <li>主な設定ファイル：<code>.bashrc</code>（シェル）, <code>.vimrc</code>（Vim）, <code>.gitconfig</code>（Git）, <code>.tmux.conf</code>（tmux）</li>
         <li><code>.</code> で始まるファイルは隠しファイル。<code>ls -a</code> で表示できる</li>
+        <li><code>~/.ssh/</code> に公開鍵・秘密鍵を置く。<code>~/.ssh/config</code> にはSSHするサーバーの設定を書く</li>
       </ul>
+    </section>
+
+    <!-- ===== 学習のコツ ===== -->
+    <section>
+      <h2>学習の進め方</h2>
+      <p>新しいツールや技術を学ぶときのおすすめの流れです。</p>
+      <ol>
+        <li><strong>ChatGPT等でやり方・理由・不明点を聞く</strong> ― ここは「不確実でもいい段階」</li>
+        <li><strong>実際に試す</strong> ― 環境・バージョン・自分の手で確認する</li>
+        <li><strong>うまくいったこと・腑に落ちたことだけをノートに残す</strong> ― ノートは「検証済みの事実の集合」にする</li>
+      </ol>
     </section>
   </div>
   <footer><p>安藤研究室 新人ガイド</p></footer>
