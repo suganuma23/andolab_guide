@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>意見・質問箱 — 安藤研究室</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>意見・質問箱</h1>
+      <p class="subtitle">匿名で質問・意見を送れます</p>
+    </div>
+  </header>
+  <div class="subpage">
+    <a href="index.html" class="back-link">&larr; ホームに戻る</a>
+
+    <section>
+      <h2>質問・意見を送る</h2>
+      <p>研究室に関する質問や改善提案があれば、ここから送ってください。匿名で送れます。</p>
+      <form class="feedback-form" onsubmit="submitFeedback(event)">
+        <textarea id="feedback-text" placeholder="ここに質問や意見を入力してください..."></textarea>
+        <button type="submit">送信</button>
+      </form>
+      <div id="feedback-result" style="margin-top: 1rem;"></div>
+    </section>
+
+    <div class="note">
+      <p>※ 送信機能を有効にするには、バックエンド（Google Formsなど）の設定が必要です。現在はデモ表示です。</p>
+    </div>
+  </div>
+  <footer><p>安藤研究室 新人ガイド</p></footer>
+
+  <script>
+    function submitFeedback(e) {
+      e.preventDefault();
+      var text = document.getElementById('feedback-text').value.trim();
+      if (!text) return;
+      document.getElementById('feedback-result').innerHTML =
+        '<div class="note"><p>送信されました（デモ）。実際に動かすにはGoogle Formsなどとの連携が必要です。</p></div>';
+      document.getElementById('feedback-text').value = '';
+    }
+  </script>
+</body>
+</html>

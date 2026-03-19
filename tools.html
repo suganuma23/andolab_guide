@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>研究で使えるツール — 安藤研究室</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>研究で使えるツール</h1>
+      <p class="subtitle">Git, VSCode, tmux, SSH, AI活用</p>
+    </div>
+  </header>
+  <div class="subpage">
+    <a href="index.html" class="back-link">&larr; ホームに戻る</a>
+
+    <!-- Git -->
+    <section>
+      <h2>Git / GitHub</h2>
+      <p>ソースコードはGitで管理する。HTTPS接続ではなくSSH接続を使う。</p>
+
+      <h3>GitHubへのSSH接続</h3>
+      <ol>
+        <li>公開鍵と秘密鍵を作る（名前はGitHub用だとわかるようにする）</li>
+        <li>公開鍵をGitHubにアップロードする</li>
+        <li><code>~/.ssh/config</code> に設定を記述する</li>
+        <li>接続テスト: <code>ssh -T git@github.com</code></li>
+      </ol>
+      <pre><code>Host github.com
+    HostName github.com
+    User git
+    IdentitiesOnly yes
+    IdentityFile ~/.ssh/id_ed25519_github</code></pre>
+
+      <h3>よく使うコマンド</h3>
+      <table>
+        <thead><tr><th>コマンド</th><th>説明</th></tr></thead>
+        <tbody>
+          <tr><td><code>git remote -v</code></td><td>リモートURL確認</td></tr>
+          <tr><td><code>git push -u origin &lt;ブランチ名&gt;</code></td><td>新ブランチをリモートにプッシュ</td></tr>
+          <tr><td><code>git checkout &lt;コミットID&gt;</code></td><td>特定のコミットを見る</td></tr>
+          <tr><td><code>git pull --rebase</code></td><td>リモートの変更を取り込む</td></tr>
+          <tr><td><code>git fetch</code></td><td>リモートの情報を更新</td></tr>
+        </tbody>
+      </table>
+
+      <h3>ブランチの仕組み</h3>
+      <p>ブランチの正体は<strong>ポインタ</strong>。コミット履歴上のあるコミットを指しているだけ。</p>
+      <ul>
+        <li><code>git fetch</code> — リモートのコミット履歴をローカルにアップデート</li>
+        <li><code>git merge origin/&lt;ブランチ名&gt;</code> — その情報を今いるブランチに取り込む</li>
+        <li><code>git pull</code> = <code>git fetch</code> + <code>git merge</code></li>
+      </ul>
+
+      <h3>merge と rebase の違い</h3>
+      <table>
+        <thead><tr><th></th><th>merge</th><th>rebase</th></tr></thead>
+        <tbody>
+          <tr><td>やること</td><td>2つのブランチを合流</td><td>コミットを付け替え</td></tr>
+          <tr><td>履歴</td><td>分岐が残る（安全）</td><td>一直線になる</td></tr>
+          <tr><td>向いてる用途</td><td>共有ブランチ</td><td>個人ブランチ</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- VSCode -->
+    <section>
+      <h2>VSCode</h2>
+      <h3>TailscaleでSSHする方法</h3>
+      <ol>
+        <li>各PCでTailscaleをインストールし、同じアカウントでログイン</li>
+        <li>Tailscaleを起動する（Ubuntuでは <code>sudo tailscale up</code>）</li>
+        <li>SSHしたいサーバのVPN上のIPアドレスをコピーして接続</li>
+      </ol>
+
+      <h3>公開鍵認証でSSHを楽にする</h3>
+      <p><code>ssh andolab</code> だけで接続できるようにする。</p>
+      <ol>
+        <li>公開鍵・秘密鍵を作る</li>
+        <li>公開鍵をサーバーに送信し <code>authorized_keys</code> に追加</li>
+        <li><code>~/.ssh/config</code> に設定を記述</li>
+      </ol>
+
+      <h3>便利なショートカット</h3>
+      <table>
+        <thead><tr><th>ショートカット</th><th>動作</th></tr></thead>
+        <tbody>
+          <tr><td><code>Ctrl + Alt + V</code></td><td>VSCodeを開く</td></tr>
+          <tr><td><code>Ctrl + Alt + S</code></td><td>Remote-SSH接続</td></tr>
+          <tr><td><code>Ctrl + Alt + W</code></td><td>WSL接続</td></tr>
+          <tr><td><code>Ctrl + Alt + Q</code></td><td>接続を切る</td></tr>
+          <tr><td><code>Ctrl + K → S</code></td><td>keybinding.jsonを開く</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- tmux -->
+    <section>
+      <h2>tmux</h2>
+      <p>1つのターミナル上で複数の仮想端末を管理できるツール。SSH接続が切れてもプログラムを実行し続けられる。</p>
+
+      <h3>3階層構造</h3>
+      <table>
+        <thead><tr><th>概念</th><th>説明</th></tr></thead>
+        <tbody>
+          <tr><td>セッション</td><td>作業単位の一番大きな枠。SSHを切断しても残る</td></tr>
+          <tr><td>ウィンドウ</td><td>タブのようなもの。用途ごとに分ける</td></tr>
+          <tr><td>ペイン</td><td>ウィンドウ内の分割画面</td></tr>
+        </tbody>
+      </table>
+
+      <h3>長時間処理の鉄則</h3>
+      <div class="note">
+        <p>tmuxは「SSH切断に強い」だけ。ローカルPCをスリープしても処理は止まる。<br>
+        <strong>長時間処理は必ず「スリープしないマシン（サーバ）」上で使うこと。</strong><br>
+        exitせずdetachが正解。</p>
+      </div>
+    </section>
+
+    <!-- AI活用 -->
+    <section>
+      <h2>AI活用</h2>
+      <div class="note">
+        <h4>学習の流れ（推奨）</h4>
+        <ol>
+          <li><strong>ChatGPTでやり方・理由・不明点を聞く</strong> — ここは「不確実でもいい場所」</li>
+          <li><strong>実際に試す</strong> — 環境・バージョン・自分の手で確認</li>
+          <li><strong>うまくいったこと・腑に落ちたことだけをノートに残す</strong> — ノートは「検証済みの事実の集合」</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- プログラミング -->
+    <section>
+      <h2>プログラミングTips</h2>
+      <h3>心得</h3>
+      <ul>
+        <li>リファクタリングに終わりはない。見直す度に改善していく</li>
+        <li>関数の共通部分は必ずサブルーチン化する</li>
+        <li>無駄な処理、変数、引数は削除する</li>
+        <li>条件分岐はブロックが小さくなるようにする</li>
+      </ul>
+      <h3>命名規則</h3>
+      <ul>
+        <li>関数名は基本「<code>動詞_名詞</code>」</li>
+        <li>変数名にアンダースコアは使わない（関数名と紛らわしいため）。変数はキャメルケース</li>
+      </ul>
+      <h3>C言語の注意点</h3>
+      <ul>
+        <li>サブ関数内で <code>malloc</code>/<code>free</code> すると断片化が起きる場合がある。メイン関数内で確保して使い回す</li>
+        <li><code>malloc</code> したら <code>free</code> を忘れずに</li>
+      </ul>
+    </section>
+  </div>
+  <footer><p>安藤研究室 新人ガイド</p></footer>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>研究室の設備 — 安藤研究室</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>研究室の設備</h1>
+      <p class="subtitle">PC・印刷機・ネットワーク</p>
+    </div>
+  </header>
+  <div class="subpage">
+    <a href="index.html" class="back-link">&larr; ホームに戻る</a>
+
+    <section>
+      <h2>印刷機の設定</h2>
+      <ol>
+        <li><code>linux-lipslx-drv-v610-jp-00</code> というドライバーをネットでダウンロードする</li>
+        <li>ダウンロードしたフォルダに移動してインストールスクリプトを実行する：
+          <pre><code>cd ダウンロードしたフォルダ
+sudo ./install.sh</code></pre>
+        </li>
+        <li>設定ウィンドウが開くので、プリンター名を追加する</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>SSH / VPN</h2>
+      <ul>
+        <li>公開鍵・秘密鍵は <code>~/.ssh/</code> に置く</li>
+        <li><code>~/.ssh/config</code> にサーバーの接続設定を書く</li>
+        <li>鍵の生成: <code>ssh-keygen -t ed25519</code></li>
+        <li>学外から大学ネットワークにアクセスする場合はVPNが必要</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>設定ファイルの場所</h2>
+      <ul>
+        <li>ホームディレクトリ (<code>~</code>) に各種設定ファイルがある（<code>.bashrc</code>, <code>.vimrc</code>, <code>.gitconfig</code> など）</li>
+        <li><code>.</code> で始まるファイルは隠しファイル。<code>ls -a</code> で表示できる</li>
+      </ul>
+    </section>
+  </div>
+  <footer><p>安藤研究室 新人ガイド</p></footer>
+</body>
+</html>

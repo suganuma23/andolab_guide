@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeXフォーマットメモ — 安藤研究室</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>TeXフォーマットメモ</h1>
+      <p class="subtitle">報告書・卒論のテンプレート</p>
+    </div>
+  </header>
+  <div class="subpage">
+    <a href="index.html" class="back-link">&larr; ホームに戻る</a>
+
+    <section>
+      <h2>基本テンプレート</h2>
+      <p>報告書・卒論はすべてLaTeXで作成します。研究室にテンプレートがあるので、それをコピーして使うのが確実です。</p>
+      <pre><code>\documentclass[a4paper,11pt]{jsarticle}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath,amssymb}
+
+\title{週次報告書}
+\author{氏名}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{今週の進捗}
+ここに内容を書く。
+
+\section{来週の予定}
+ここに予定を書く。
+
+\end{document}</code></pre>
+    </section>
+
+    <section>
+      <h2>よく使うコマンド</h2>
+      <table>
+        <thead><tr><th>コマンド</th><th>説明</th></tr></thead>
+        <tbody>
+          <tr><td><code>\section{}</code></td><td>セクション見出し</td></tr>
+          <tr><td><code>\subsection{}</code></td><td>サブセクション</td></tr>
+          <tr><td><code>\includegraphics[width=0.8\linewidth]{fig.png}</code></td><td>画像挿入</td></tr>
+          <tr><td><code>\begin{equation} ... \end{equation}</code></td><td>数式（番号付き）</td></tr>
+          <tr><td><code>\cite{key}</code></td><td>参考文献の引用</td></tr>
+          <tr><td><code>\ref{label}</code></td><td>図・表・式の参照</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+  <footer><p>安藤研究室 新人ガイド</p></footer>
+</body>
+</html>
