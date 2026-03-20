@@ -72,7 +72,7 @@
   <header>
     <div class="header-inner">
       <h1>研究で使えるツール</h1>
-      <p class="subtitle">Git, SSH, VSCode, tmux, AI</p>
+      <p class="subtitle">Git, SSH, tmux, AI</p>
     </div>
   </header>
   <div class="subpage">
@@ -82,7 +82,6 @@
     <div class="tab-bar">
       <button class="tab-btn active" data-tab="git">Git / GitHub</button>
       <button class="tab-btn" data-tab="ssh">SSH / Remote-SSH</button>
-      <button class="tab-btn" data-tab="vscode">VSCode</button>
       <button class="tab-btn" data-tab="tmux">tmux</button>
       <button class="tab-btn" data-tab="ai">AI</button>
     </div>
@@ -426,64 +425,6 @@ git checkout --ours &lt;ファイル名&gt;</code></pre>
       </section>
 
     </div><!-- /tab-ssh -->
-
-    <!-- ============================================================ -->
-    <!-- 3. VSCode -->
-    <!-- ============================================================ -->
-    <div class="tab-content" id="tab-vscode">
-
-      <section>
-        <h2>VSCode</h2>
-        <p>Visual Studio Code（VSCode）は、軽量で拡張性の高いコードエディタです。Remote-SSHやWSLとの連携で、さまざまな環境でのコーディングが可能になります。</p>
-      </section>
-
-      <section>
-        <h3>便利なショートカットキー</h3>
-        <p><code>keybinding.json</code> は <code>Ctrl + K &rarr; S</code> で開けます。以下は筆者が設定しているカスタムショートカットです。</p>
-        <table>
-          <thead><tr><th>ショートカット</th><th>動作</th></tr></thead>
-          <tbody>
-            <tr><td><code>Ctrl + Alt + V</code></td><td>VSCodeを開く</td></tr>
-            <tr><td><code>Ctrl + Alt + S</code></td><td>Remote-SSH接続</td></tr>
-            <tr><td><code>Ctrl + Alt + W</code></td><td>WSL接続</td></tr>
-            <tr><td><code>Ctrl + Alt + Q</code></td><td>接続を切る</td></tr>
-            <tr><td><code>Ctrl + Alt + C</code></td><td>そのファイルのフォルダにcd</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h3>設定ファイル</h3>
-        <ul>
-          <li><code>settings.json</code> でVSCodeの拡張機能や設定を記述できる</li>
-          <li><code>&gt; Open Remote Setting</code> でリモート側の設定を開ける</li>
-          <li><code>Open Default Setting</code> -- 約8000行の全設定ファイルが開く</li>
-          <li><code>Open User Setting</code> -- GUIの設定画面が開く</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>プログラミングTips</h3>
-        <h4>心得</h4>
-        <ul>
-          <li>リファクタリングに終わりはない。見直す度に改善していく</li>
-          <li>関数の共通部分は必ずサブルーチン化する</li>
-          <li>無駄な処理、変数、引数は削除する</li>
-          <li>条件分岐はブロックが小さくなるようにする</li>
-        </ul>
-        <h4>命名規則</h4>
-        <ul>
-          <li>関数名は基本「<code>動詞_名詞</code>」</li>
-          <li>変数名にアンダースコアは使わない（関数名と紛らわしいため）。変数はキャメルケース</li>
-        </ul>
-        <h4>C言語の注意点</h4>
-        <ul>
-          <li>サブ関数内で <code>malloc</code>/<code>free</code> すると断片化が起きる場合がある。メイン関数内で確保して使い回す</li>
-          <li><code>malloc</code> したら <code>free</code> を忘れずに</li>
-        </ul>
-      </section>
-
-    </div><!-- /tab-vscode -->
 
     <!-- ============================================================ -->
     <!-- 4. tmux -->
