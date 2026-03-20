@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>研究で使う知識・手法 — 安藤研究室</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 0.65rem 1.3rem;
+      border: none;
+      background: #e8eaf0;
+      color: #555;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+      bottom: -2px;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn:hover { background: #d0d4e0; color: #1a1a2e; }
+    .tab-btn.active { background: #fff; color: #0f3460; border-bottom: 2px solid #0f3460; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .step-box {
+      background: #f7f9fc;
+      border: 1px solid #e0e4ec;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .step-box h4 { color: #0f3460; margin-bottom: 0.5rem; }
+    @media (max-width: 600px) {
+      .tab-btn { padding: 0.5rem 0.8rem; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>研究で使う知識・手法</h1>
+      <p class="subtitle">回帰分析・最適化・アルゴリズム</p>
+    </div>
+  </header>
+  <div class="subpage">
+    <a href="index.html" class="back-link">&larr; ホームに戻る</a>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="regression">回帰分析</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1. 回帰分析 (Regression Analysis) -->
+    <!-- ============================================================ -->
+    <div class="tab-content active" id="tab-regression">
+
+      <section>
+        <h2>回帰分析 (Regression Analysis)</h2>
+        <p>回帰分析は、データの関係性を数式で表現する手法です。安藤研では、アルゴリズムの<strong>計算時間がデータサイズ n に対してどのように増加するか</strong>を分析するために使います。</p>
+        <p>卒業研究では、実験結果をまとめる際に回帰分析を行い、計算量のオーダーを実験的に確認します。</p>
+      </section>
+
+      <section>
+        <h3>線形回帰（最小二乗法）</h3>
+        <p>最も基本的な回帰分析です。データ点 <code>(x<sub>1</sub>, y<sub>1</sub>), ..., (x<sub>n</sub>, y<sub>n</sub>)</code> に対して、直線 <code>y = ax + b</code> を当てはめます。</p>
+
+        <div class="step-box">
+          <h4>最小二乗法の公式</h4>
+          <p>残差の二乗和 <code>&sum;(y<sub>i</sub> - (ax<sub>i</sub> + b))<sup>2</sup></code> を最小化する <code>a</code>, <code>b</code> は以下で求まる:</p>
+          <pre><code>a = (n&sum;x<sub>i</sub>y<sub>i</sub> - &sum;x<sub>i</sub>&sum;y<sub>i</sub>) / (n&sum;x<sub>i</sub><sup>2</sup> - (&sum;x<sub>i</sub>)<sup>2</sup>)
+
+b = (&sum;y<sub>i</sub> - a&sum;x<sub>i</sub>) / n</code></pre>
+        </div>
+
+        <div class="step-box">
+          <h4>決定係数 R<sup>2</sup></h4>
+          <p>回帰の当てはまりの良さを表す指標です。1に近いほど良い。</p>
+          <pre><code>R<sup>2</sup> = 1 - SS<sub>res</sub> / SS<sub>tot</sub>
+
+SS<sub>tot</sub> = &sum;(y<sub>i</sub> - y&#x0304;)<sup>2</sup>    （全変動）
+SS<sub>res</sub> = &sum;(y<sub>i</sub> - (ax<sub>i</sub> + b))<sup>2</sup>  （残差変動）</code></pre>
+          <ul>
+            <li><code>R<sup>2</sup> = 1</code>: データが完全に直線上にある</li>
+            <li><code>R<sup>2</sup> = 0</code>: 回帰が全く当てはまらない</li>
+            <li>実験データなら <code>R<sup>2</sup> &ge; 0.99</code> くらいあると良い</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h3>対数スケールでの回帰（べき乗則の推定）</h3>
+        <p>アルゴリズムの計算時間は多くの場合、<strong>べき乗則</strong>に従います:</p>
+        <pre><code>time = e<sup>b</sup> &middot; n<sup>a</sup></code></pre>
+        <p>この形を直接推定するのは難しいですが、<strong>両辺の対数を取る</strong>と線形になります:</p>
+        <pre><code>log(time) = a &middot; log(n) + b</code></pre>
+        <p>つまり <code>X = log(n)</code>, <code>Y = log(time)</code> として線形回帰すれば、傾き <code>a</code> が計算量のオーダーの指数、切片 <code>b</code> が定数係数に対応します。</p>
+
+        <div class="step-box">
+          <h4>解釈の例</h4>
+          <ul>
+            <li><code>a &approx; 2</code> → 計算時間は <code>O(n<sup>2</sup>)</code> 程度</li>
+            <li><code>a &approx; 3</code> → 計算時間は <code>O(n<sup>3</sup>)</code> 程度</li>
+            <li><code>a &approx; 1</code> → 計算時間は <code>O(n)</code> 程度</li>
+          </ul>
+          <p><code>R<sup>2</sup></code> が 1 に近ければ、べき乗則のモデルがデータによく当てはまっていることを意味します。</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>卒研での実践: make_table.py</h3>
+        <p>卒業研究のプログラム（kSSl_ls）では、<code>experiments/make_table.py</code> で回帰分析を行っています。以下がその流れです。</p>
+
+        <div class="step-box">
+          <h4>1. 実験データの収集</h4>
+          <p>各パラメータ（k, l）と各データサイズ n に対して、5つのシード値で実験を行い、<code>time_av</code>（1反復あたりの平均計算時間）を記録します。</p>
+          <pre><code># output_kss.csv の形式
+k, l, n, time, time_av, func_value
+1, 60, 60, 0.2554, 0.0213, 424510654.30
+1, 60, 60, 0.5544, 0.0213, 421864245.23
+...</code></pre>
+        </div>
+
+        <div class="step-box">
+          <h4>2. 各 n での平均を計算</h4>
+          <p>同じ k（または l）と n の組み合わせで、5シード分の <code>time_av</code> を平均します。</p>
+        </div>
+
+        <div class="step-box">
+          <h4>3. 対数スケールで線形回帰</h4>
+          <p><code>log(n)</code> と <code>log(time_av)</code> に対して最小二乗法で回帰します。</p>
+          <pre><code># make_table.py の linear_regression 関数
+def linear_regression(xs, ys):
+    n = len(xs)
+    sx  = sum(xs)
+    sy  = sum(ys)
+    sxx = sum(x * x for x in xs)
+    sxy = sum(x * y for x, y in zip(xs, ys))
+    a = (n * sxy - sx * sy) / (n * sxx - sx * sx)
+    b = (sy - a * sx) / n
+    # R^2 の計算
+    y_mean = sy / n
+    ss_tot = sum((y - y_mean) ** 2 for y in ys)
+    ss_res = sum((y - (a * x + b)) ** 2 for x, y in zip(xs, ys))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 1.0
+    return a, b, r2</code></pre>
+          <p>ここで <code>xs = [log(60), log(70), log(80), log(90), log(100)]</code>、<code>ys = [log(avg_time) for each n]</code> です。</p>
+        </div>
+
+        <div class="step-box">
+          <h4>4. 結果の表にまとめる</h4>
+          <p>各パラメータについて、n ごとの平均計算時間と回帰係数 a, b, R<sup>2</sup> を表形式で出力します。</p>
+          <pre><code>======================================================================
+表1: 計算時間と回帰分析の結果（kSS問題）
+  time_av = e^b * n^a の回帰
+======================================================================
+   k    n=60    n=70    n=80    n=90   n=100        a          b     R^2
+----------------------------------------------------------------------
+   1  0.0219  0.0302  0.0395  ...    ...     2.1234    -8.1234  0.9987
+   2  0.0583  0.0812  0.1083  ...    ...     2.3456    -7.5678  0.9992
+  ...
+   n  0.3456  0.5678  ...     ...    ...     3.1234    -5.6789  0.9998</code></pre>
+          <p>a の値がアルゴリズムの計算量のオーダーを示し、R<sup>2</sup> が 1 に近いことでモデルの妥当性を確認します。</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>Pythonでの実装ポイント</h3>
+
+        <h4>データの読み込み（csv モジュール）</h4>
+        <pre><code>import csv
+
+def load_csv(filename):
+    rows = []
+    with open(filename, newline="") as f:
+        reader = csv.DictReader(f, skipinitialspace=True)
+        for row in reader:
+            rows.append({
+                "k": int(row["k"]),
+                "n": int(row["n"]),
+                "time_av": float(row["time_av"]),
+            })
+    return rows</code></pre>
+
+        <h4>グループ化と平均の計算（collections.defaultdict）</h4>
+        <pre><code>from collections import defaultdict
+
+mapping = defaultdict(list)
+for r in data:
+    mapping[(r["k"], r["n"])].append(r["time_av"])
+
+# 各グループの平均
+for (k, n), vals in mapping.items():
+    avg = sum(vals) / len(vals)</code></pre>
+
+        <h4>対数変換と回帰</h4>
+        <pre><code>import math
+
+log_n = [math.log(n) for n in N_VALUES]      # X軸
+log_t = [math.log(avg) for avg in averages]   # Y軸
+
+a, b, r2 = linear_regression(log_n, log_t)
+# → time_av ≈ e^b * n^a</code></pre>
+
+        <div class="note">
+          <p>Python標準ライブラリだけで実装できます。numpy や scipy は不要です。</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>結果のグラフ化: make_graph.py</h3>
+        <p>回帰分析と合わせて、実験結果をグラフで可視化することも重要です。<code>experiments/make_graph.py</code> では matplotlib を使って time vs func_value のグラフを描画しています。</p>
+        <pre><code>import matplotlib.pyplot as plt
+
+# 散布図 + 折れ線
+ax.plot(times, func_values, marker="o", label=f"l={l}")
+ax.set_xlabel("time (s)")
+ax.set_ylabel("func_value")
+ax.legend()
+ax.grid(True)
+fig.savefig("graph.png", dpi=150)</code></pre>
+        <p>gnuplot でも同様のグラフを描けますが、Python で実験スクリプトと一体化させる方が管理しやすいこともあります。用途に応じて使い分けましょう。</p>
+      </section>
+
+    </div><!-- /tab-regression -->
+
+  </div><!-- /subpage -->
+
+  <footer><p>安藤研究室 新人ガイド</p></footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-bar').offsetTop - 20, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

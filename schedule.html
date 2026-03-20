@@ -254,16 +254,20 @@
   <header>
     <div class="header-inner">
       <h1>年間スケジュール</h1>
-      <p class="subtitle">前年度の実績ベース</p>
+      <p class="subtitle">前年度の日程ベース（2026年度版）</p>
     </div>
   </header>
   <div class="subpage">
     <a href="index.html" class="back-link">&larr; ホームに戻る</a>
 
+    <div style="display:flex; align-items:center; justify-content:center; gap:0.75rem; margin-bottom:1rem;">
+      <label for="year-select" style="font-weight:600; font-size:0.95rem;">年度:</label>
+      <select id="year-select" style="padding:0.4rem 0.75rem; border:2px solid #0f3460; border-radius:6px; font-size:0.95rem; color:#0f3460; background:#fff; cursor:pointer;"></select>
+    </div>
     <div class="view-toggle">
       <button id="btn-monthly" class="active" onclick="showView('monthly')">月間</button>
       <button id="btn-yearly" onclick="showView('yearly')">年間</button>
-      <button id="btn-list" onclick="showView('list')">リスト</button>
+      <button id="btn-list" onclick="showView('list')">一覧</button>
     </div>
 
     <!-- 月間ビュー -->
@@ -294,43 +298,14 @@
         <h2>主要イベント</h2>
         <table>
           <thead><tr><th>時期</th><th>イベント</th></tr></thead>
-          <tbody>
-            <tr><td>4月23日</td><td>4年生メンバー確定</td></tr>
-            <tr><td>4月24日</td><td>初顔合わせ</td></tr>
-            <tr><td>5月1日</td><td>M1先輩の自己紹介・研究紹介</td></tr>
-            <tr><td>5月7日</td><td>新入生歓迎会</td></tr>
-            <tr><td>5月8日</td><td>M2先輩の自己紹介・研究紹介</td></tr>
-            <tr><td>5月13日</td><td>ゼミの日程打ち合わせ</td></tr>
-            <tr><td>5, 6, 7月</td><td>週一でゼミ発表</td></tr>
-            <tr><td>7月16日</td><td>ゼミのアブストラクト提出期限</td></tr>
-            <tr><td>7月14〜18日</td><td>発表練習（18日はみんなの前で）</td></tr>
-            <tr><td>7月19日（土）</td><td>セミナー発表会（終日）</td></tr>
-            <tr><td>7月30日〜9月27日</td><td>夏休み</td></tr>
-            <tr><td>8月27, 28日</td><td>院試（一般）</td></tr>
-            <tr><td>9月5日</td><td>合格発表（一般）</td></tr>
-            <tr><td>10, 11, 12, 1月</td><td>卒業研究</td></tr>
-            <tr><td>1月ごろ</td><td>卒論まとめ開始</td></tr>
-            <tr><td>2月3日ごろ</td><td>アブストラクト完成</td></tr>
-            <tr><td>卒研発表前一週間</td><td>発表練習</td></tr>
-            <tr><td>1月15日（木）午後</td><td>修士中間発表会</td></tr>
-            <tr><td>2月10日（火）終日</td><td>修論発表会</td></tr>
-            <tr><td>2月12日（木）終日</td><td>卒研発表会</td></tr>
-            <tr><td>2月末ごろまで</td><td>プログラム整理</td></tr>
-            <tr><td>3月17日</td><td>学位授与式・祝賀会</td></tr>
-            <tr><td>11月7日</td><td>BBQ</td></tr>
-          </tbody>
+          <tbody id="list-main"></tbody>
         </table>
       </section>
       <section>
-        <h2>飲み会スケジュール</h2>
+        <h2>親睦イベント</h2>
         <table>
           <thead><tr><th>日程</th><th>内容</th></tr></thead>
-          <tbody>
-            <tr><td>5月7日</td><td>新入生歓迎会</td></tr>
-            <tr><td>7月19日</td><td>発表会打ち上げ</td></tr>
-            <tr><td>1月15日</td><td>中間発表打ち上げ</td></tr>
-            <tr><td>2月12日</td><td>卒研打ち上げ</td></tr>
-          </tbody>
+          <tbody id="list-social"></tbody>
         </table>
       </section>
       <section>
@@ -344,81 +319,137 @@
   <footer><p>安藤研究室 新人ガイド</p></footer>
 
   <script>
-    // ===== Data =====
-    var baseYear = 2025;
+    // ===== Data (年度別) =====
+    // 新しい年度を追加するには、allYearData にエントリを追加するだけでOK
+    var allYearData = {
+      "2025": {
+        label: "2025年度（前年）",
+        baseYear: 2025,
+        dayEvents: [
+          { month:4, day:23, text:"4年生メンバー確定", type:"academic" },
+          { month:4, day:24, text:"初顔合わせ", type:"academic" },
+          { month:5, day:1,  text:"M1先輩 自己紹介・研究紹介", type:"academic" },
+          { month:5, day:7,  text:"新入生歓迎会", type:"party" },
+          { month:5, day:8,  text:"M2先輩 自己紹介・研究紹介", type:"academic" },
+          { month:5, day:13, text:"ゼミの日程打ち合わせ", type:"academic" },
+          { month:7, day:16, text:"アブスト提出期限", type:"academic" },
+          { month:7, day:19, text:"セミナー発表会（終日）", type:"presentation" },
+          { month:7, day:19, text:"発表会打ち上げ", type:"party" },
+          { month:8, day:26, text:"院試1日目", type:"academic" },
+          { month:8, day:27, text:"院試2日目", type:"academic" },
+          { month:9, day:5,  text:"合格発表（一般）", type:"academic" },
+          { month:11,day:7,  text:"BBQ", type:"bbq" },
+          { month:1, day:15, text:"修士中間発表会（午後）", type:"presentation" },
+          { month:1, day:15, text:"中間発表打ち上げ", type:"party" },
+          { month:2, day:3,  text:"アブストラクト完成（目安）", type:"academic" },
+          { month:2, day:10, text:"修論発表会（終日）", type:"presentation" },
+          { month:2, day:12, text:"卒研発表会（終日）", type:"presentation" },
+          { month:2, day:12, text:"修論・卒研打ち上げ", type:"party" },
+          { month:3, day:17, text:"学位授与式・祝賀会", type:"academic" },
+        ],
+        rangeEvents: [
+          { sm:5, sd:13, em:7, ed:10, text:"週一ゼミ", type:"research" },
+          { sm:7, sd:11, em:7, ed:16, text:"アブスト作成", type:"academic" },
+          { sm:7, sd:14, em:7, ed:18, text:"発表練習", type:"presentation" },
+          { sm:7, sd:30, em:9, ed:27, text:"夏休み", type:"vacation" },
+          { sm:10,sd:1, em:1, ed:31, text:"卒業研究", type:"research" },
+          { sm:1, sd:29, em:2, ed:3,  text:"卒論アブスト作成", type:"academic" },
+          { sm:2, sd:5,  em:2, ed:11, text:"発表練習", type:"presentation" },
+          { sm:2, sd:13, em:2, ed:20, text:"卒論直し・プログラム整理", type:"research" },
+        ],
+        yearEvents: [
+          { month:4, text:"4/23 4年生メンバー確定", type:"academic" },
+          { month:4, text:"4/24 初顔合わせ", type:"academic" },
+          { month:5, text:"5/1 M1先輩 自己紹介・研究紹介", type:"academic" },
+          { month:5, text:"5/7 新入生歓迎会", type:"party" },
+          { month:5, text:"5/8 M2先輩 自己紹介・研究紹介", type:"academic" },
+          { month:5, text:"5/13 ゼミ日程打ち合わせ", type:"academic" },
+          { month:5, text:"週一ゼミ 開始", type:"research" },
+          { month:7, text:"7/16 アブストラクト提出期限", type:"academic" },
+          { month:7, text:"7/14〜18 発表練習", type:"presentation" },
+          { month:7, text:"7/19 セミナー発表会", type:"presentation" },
+          { month:7, text:"7/30〜 夏休み", type:"vacation" },
+          { month:8, text:"8/26〜27 院試（一般）", type:"academic" },
+          { month:9, text:"9/5 合格発表", type:"academic" },
+          { month:9, text:"〜9/27 夏休み終了", type:"vacation" },
+          { month:10,text:"卒業研究 開始", type:"research" },
+          { month:11,text:"11/7 BBQ", type:"bbq" },
+          { month:1, text:"卒論まとめ開始", type:"research" },
+          { month:1, text:"1/15 修士中間発表会", type:"presentation" },
+          { month:2, text:"2/3ごろ アブストラクト完成", type:"academic" },
+          { month:2, text:"2/5〜11 発表練習", type:"presentation" },
+          { month:2, text:"2/10 修論発表会", type:"presentation" },
+          { month:2, text:"2/12 卒研発表会", type:"presentation" },
+          { month:3, text:"3/17 学位授与式・祝賀会", type:"academic" },
+        ],
+        listEvents: [
+          { date:"4月23日", text:"4年生メンバー確定" },
+          { date:"4月24日", text:"初顔合わせ" },
+          { date:"5月1日", text:"M1先輩の自己紹介・研究紹介" },
+          { date:"5月7日", text:"新入生歓迎会" },
+          { date:"5月8日", text:"M2先輩の自己紹介・研究紹介" },
+          { date:"5月13日", text:"ゼミの日程打ち合わせ" },
+          { date:"5〜7月", text:"週一でゼミ発表" },
+          { date:"7月14〜18日", text:"発表練習（18日はみんなの前で）" },
+          { date:"7月16日", text:"ゼミのアブストラクト提出期限" },
+          { date:"7月19日（土）", text:"セミナー発表会（終日）" },
+          { date:"7月30日〜9月27日", text:"夏休み" },
+          { date:"8月26・27日", text:"院試（一般）" },
+          { date:"9月5日", text:"合格発表（一般）" },
+          { date:"10〜1月", text:"卒業研究" },
+          { date:"11月7日", text:"BBQ" },
+          { date:"1月ごろ", text:"卒論まとめ開始" },
+          { date:"1月15日（木）午後", text:"修士中間発表会" },
+          { date:"2月3日ごろ", text:"アブストラクト完成" },
+          { date:"卒研発表前一週間", text:"発表練習" },
+          { date:"2月10日（火）終日", text:"修論発表会" },
+          { date:"2月12日（木）終日", text:"卒研発表会" },
+          { date:"2月末ごろまで", text:"プログラム整理" },
+          { date:"3月17日", text:"学位授与式・祝賀会" },
+        ],
+        socialEvents: [
+          { date:"5月7日", text:"新入生歓迎会" },
+          { date:"7月19日", text:"発表会打ち上げ" },
+          { date:"11月7日", text:"BBQ" },
+          { date:"1月15日", text:"中間発表打ち上げ" },
+          { date:"2月12日", text:"修論・卒研打ち上げ" },
+        ],
+      },
+      // ===== 2026年度を追加する場合はここにコピーして日程を書き換える =====
+      // "2026": {
+      //   label: "2026年度",
+      //   baseYear: 2026,
+      //   dayEvents: [ ... ],
+      //   rangeEvents: [ ... ],
+      //   yearEvents: [ ... ],
+      //   listEvents: [ ... ],
+      //   socialEvents: [ ... ],  // 親睦イベント（飲み会・BBQなど）
+      // },
+    };
+
+    // 現在選択中の年度データ
+    var currentYearKey = "2025";
+    var baseYear, dayEvents, rangeEvents, yearEvents;
+
     var monthNames = ["","1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
     var dayNames = ["日","月","火","水","木","金","土"];
     var order = [4,5,6,7,8,9,10,11,12,1,2,3];
 
     function getYearForMonth(m) { return m >= 4 ? baseYear : baseYear + 1; }
 
-    // Linearize date for comparison (academic year Apr-Mar)
     function toLinear(m, d) {
       var adj = m >= 4 ? m : m + 12;
       return adj * 100 + d;
     }
 
-    // Single-day events
-    var dayEvents = [
-      { month:4, day:23, text:"4年生メンバー確定", type:"academic" },
-      { month:4, day:24, text:"初顔合わせ", type:"academic" },
-      { month:5, day:1,  text:"M1先輩 自己紹介・研究紹介", type:"academic" },
-      { month:5, day:7,  text:"新入生歓迎会", type:"party" },
-      { month:5, day:8,  text:"M2先輩 自己紹介・研究紹介", type:"academic" },
-      { month:5, day:13, text:"ゼミの日程打ち合わせ", type:"academic" },
-      { month:7, day:16, text:"アブスト提出期限", type:"academic" },
-      { month:7, day:19, text:"セミナー発表会（終日）", type:"presentation" },
-      { month:7, day:19, text:"発表会打ち上げ", type:"party" },
-      { month:8, day:27, text:"院試1日目", type:"academic" },
-      { month:8, day:28, text:"院試2日目", type:"academic" },
-      { month:9, day:5,  text:"合格発表（一般）", type:"academic" },
-      { month:11,day:7,  text:"BBQ", type:"bbq" },
-      { month:1, day:15, text:"修士中間発表会（午後）", type:"presentation" },
-      { month:1, day:15, text:"中間発表打ち上げ", type:"party" },
-      { month:2, day:3,  text:"アブストラクト完成（目安）", type:"academic" },
-      { month:2, day:10, text:"修論発表会（終日）", type:"presentation" },
-      { month:2, day:12, text:"卒研発表会（終日）", type:"presentation" },
-      { month:2, day:12, text:"卒研打ち上げ", type:"party" },
-      { month:3, day:17, text:"学位授与式・祝賀会", type:"academic" },
-    ];
-
-    // Multi-day (range) events — displayed as spanning bars
-    var rangeEvents = [
-      { sm:5, sd:13, em:7, ed:10, text:"週一ゼミ", type:"research" },
-      { sm:7, sd:11, em:7, ed:16, text:"アブスト作成", type:"academic" },
-      { sm:7, sd:14, em:7, ed:18, text:"発表練習", type:"presentation" },
-      { sm:7, sd:30, em:9, ed:27, text:"夏休み", type:"vacation" },
-      { sm:10,sd:1, em:1, ed:31, text:"卒業研究", type:"research" },
-      { sm:1, sd:29, em:2, ed:3,  text:"卒論アブスト作成", type:"academic" },
-      { sm:2, sd:5,  em:2, ed:11, text:"発表練習", type:"presentation" },
-    ];
-
-    // Year view events
-    var yearEvents = [
-      { month:4, text:"4/23 4年生メンバー確定", type:"academic" },
-      { month:4, text:"4/24 初顔合わせ", type:"academic" },
-      { month:5, text:"5/1 M1先輩 自己紹介・研究紹介", type:"academic" },
-      { month:5, text:"5/7 新入生歓迎会", type:"party" },
-      { month:5, text:"5/8 M2先輩 自己紹介・研究紹介", type:"academic" },
-      { month:5, text:"5/13 ゼミ日程打ち合わせ", type:"academic" },
-      { month:5, text:"週一ゼミ 開始", type:"research" },
-      { month:7, text:"7/16 アブストラクト提出期限", type:"academic" },
-      { month:7, text:"7/14〜18 発表練習", type:"presentation" },
-      { month:7, text:"7/19 セミナー発表会", type:"presentation" },
-      { month:7, text:"7/30〜 夏休み", type:"vacation" },
-      { month:8, text:"8/27〜28 院試（一般）", type:"academic" },
-      { month:9, text:"9/5 合格発表", type:"academic" },
-      { month:9, text:"〜9/27 夏休み終了", type:"vacation" },
-      { month:10,text:"卒業研究 開始", type:"research" },
-      { month:11,text:"11/7 BBQ", type:"bbq" },
-      { month:1, text:"卒論まとめ開始", type:"research" },
-      { month:1, text:"1/15 修士中間発表会", type:"presentation" },
-      { month:2, text:"2/3ごろ アブストラクト完成", type:"academic" },
-      { month:2, text:"2/5〜11 発表練習", type:"presentation" },
-      { month:2, text:"2/10 修論発表会", type:"presentation" },
-      { month:2, text:"2/12 卒研発表会", type:"presentation" },
-      { month:3, text:"3/17 学位授与式・祝賀会", type:"academic" },
-    ];
+    function loadYearData(key) {
+      var data = allYearData[key];
+      currentYearKey = key;
+      baseYear = data.baseYear;
+      dayEvents = data.dayEvents;
+      rangeEvents = data.rangeEvents;
+      yearEvents = data.yearEvents;
+    }
 
     // ===== View Toggle =====
     function showView(v) {
@@ -633,22 +664,78 @@
       if (e.key === "ArrowRight" && currentMonthIdx < order.length - 1) renderMonth(currentMonthIdx + 1);
     });
 
-    renderMonth(0);
-
     // ===== Year Calendar =====
-    var cal = document.getElementById("calendar");
-    order.forEach(function(m) {
-      var div = document.createElement("div");
-      div.className = "cal-month";
-      var header = '<div class="cal-month-name">' + monthNames[m] + '</div>';
-      var evHtml = "";
-      yearEvents.forEach(function(e) {
-        if (e.month === m) evHtml += '<div class="cal-event ' + e.type + '">' + e.text + '</div>';
+    function renderYearCalendar() {
+      var cal = document.getElementById("calendar");
+      cal.innerHTML = "";
+      order.forEach(function(m) {
+        var div = document.createElement("div");
+        div.className = "cal-month";
+        var header = '<div class="cal-month-name">' + monthNames[m] + '</div>';
+        var evHtml = "";
+        // 範囲イベント（該当月に重なるもの）
+        rangeEvents.forEach(function(re) {
+          var smAdj = re.sm >= 4 ? re.sm : re.sm + 12;
+          var emAdj = re.em >= 4 ? re.em : re.em + 12;
+          var mAdj = m >= 4 ? m : m + 12;
+          if (mAdj >= smAdj && mAdj <= emAdj) {
+            evHtml += '<div class="cal-event ' + re.type + '" style="opacity:0.7; font-style:italic;">' + re.text + '</div>';
+          }
+        });
+        // 単発イベント
+        yearEvents.forEach(function(e) {
+          if (e.month === m) evHtml += '<div class="cal-event ' + e.type + '">' + e.text + '</div>';
+        });
+        if (!evHtml) evHtml = '<div style="color:#aaa;font-size:0.8rem;">予定なし</div>';
+        div.innerHTML = header + evHtml;
+        cal.appendChild(div);
       });
-      if (!evHtml) evHtml = '<div style="color:#aaa;font-size:0.8rem;">予定なし</div>';
-      div.innerHTML = header + evHtml;
-      cal.appendChild(div);
-    });
+    }
+
+    // ===== List View =====
+    function renderListView() {
+      var data = allYearData[currentYearKey];
+      var mainBody = document.getElementById("list-main");
+      mainBody.innerHTML = "";
+      data.listEvents.forEach(function(e) {
+        mainBody.innerHTML += "<tr><td>" + e.date + "</td><td>" + e.text + "</td></tr>";
+      });
+      var drinkBody = document.getElementById("list-social");
+      drinkBody.innerHTML = "";
+      data.socialEvents.forEach(function(e) {
+        drinkBody.innerHTML += "<tr><td>" + e.date + "</td><td>" + e.text + "</td></tr>";
+      });
+    }
+
+    // ===== Year Selector =====
+    function initYearSelect() {
+      var sel = document.getElementById("year-select");
+      sel.innerHTML = "";
+      var keys = Object.keys(allYearData).sort();
+      keys.forEach(function(k) {
+        var opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = allYearData[k].label;
+        sel.appendChild(opt);
+      });
+      // デフォルトは最新の年度
+      sel.value = keys[keys.length - 1];
+      sel.addEventListener("change", function() {
+        loadYearData(this.value);
+        renderAll();
+      });
+    }
+
+    function renderAll() {
+      renderMonth(currentMonthIdx);
+      renderYearCalendar();
+      renderListView();
+    }
+
+    // ===== Init =====
+    initYearSelect();
+    loadYearData(document.getElementById("year-select").value);
+    renderAll();
   </script>
 </body>
 </html>

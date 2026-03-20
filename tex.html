@@ -3,24 +3,622 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TeXフォーマットメモ — 安藤研究室</title>
+  <title>TeXについて — 安藤研究室</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 0.65rem 1.3rem;
+      border: none;
+      background: #e8eaf0;
+      color: #555;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+      bottom: -2px;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn:hover { background: #d0d4e0; color: #1a1a2e; }
+    .tab-btn.active { background: #fff; color: #0f3460; border-bottom: 2px solid #0f3460; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .step-box {
+      background: #f7f9fc;
+      border: 1px solid #e0e4ec;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .step-box h4 { color: #0f3460; margin-bottom: 0.5rem; }
+    @media (max-width: 600px) {
+      .tab-btn { padding: 0.5rem 0.8rem; font-size: 0.82rem; }
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="header-inner">
-      <h1>TeXフォーマットメモ</h1>
-      <p class="subtitle">報告書・卒論のテンプレート</p>
+      <h1>TeXについて</h1>
+      <p class="subtitle">TeXとは・安藤研フォーマットメモ</p>
     </div>
   </header>
   <div class="subpage">
     <a href="index.html" class="back-link">&larr; ホームに戻る</a>
-    <section>
-      <div class="note">
-        <p>後で書きます。</p>
-      </div>
-    </section>
-  </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="about">TeXとは</button>
+      <button class="tab-btn" data-tab="format">安藤研TeXフォーマットメモ</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1. TeXとは -->
+    <!-- ============================================================ -->
+    <div class="tab-content active" id="tab-about">
+
+      <section>
+        <h2>TeXとは</h2>
+        <p>TeX（テフ）は、数式を含む文書を美しく組版するためのシステムです。安藤研では<strong>報告書・卒論・アブストラクト・スライド</strong>の全てをTeXで作成します。</p>
+      </section>
+
+      <section>
+        <h3>なぜTeXを使うのか</h3>
+        <ul>
+          <li><strong>数式が美しい</strong> — Word等とは比較にならない品質で数式が組版される</li>
+          <li><strong>バージョン管理と相性が良い</strong> — テキストファイルなのでGitで管理できる</li>
+          <li><strong>学術論文の標準</strong> — 数学・情報系の論文はほぼ全てTeXで書かれている</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>TeXの環境構築</h3>
+
+        <div class="step-box">
+          <h4>TeX Liveのインストール</h4>
+          <p>TeXのディストリビューションとして<strong>TeX Live</strong>を使います。</p>
+          <p><strong>Ubuntu / WSL:</strong></p>
+          <pre><code>sudo apt install texlive-full</code></pre>
+          <p><code>texlive-full</code> は容量が大きい（数GB）ですが、パッケージ不足で悩まなくて済むのでおすすめです。</p>
+        </div>
+
+        <div class="step-box">
+          <h4>インストール確認</h4>
+          <pre><code>platex --version
+dvipdfmx --version</code></pre>
+          <p>安藤研では <code>platex</code>（日本語対応）→ <code>dvipdfmx</code>（PDF変換）の流れでコンパイルします。</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>コンパイル方法</h3>
+
+        <h4>基本: ptex2pdf（おすすめ）</h4>
+        <p><code>ptex2pdf</code> を使えば、platex → dvipdfmx を<strong>1コマンド</strong>でPDFまで生成できます。</p>
+        <pre><code>ptex2pdf -l report.tex</code></pre>
+        <p><code>-l</code> オプションは platex を使う指定です。これだけで <code>report.pdf</code> が生成されます。</p>
+
+        <div class="note">
+          <p>相互参照（<code>\ref</code> や <code>\cite</code>）がある場合は2回実行すると正しく解決されます。</p>
+          <pre><code>ptex2pdf -l report.tex
+ptex2pdf -l report.tex</code></pre>
+        </div>
+
+        <h4>手動でステップを分ける方法</h4>
+        <p><code>ptex2pdf</code> が内部でやっていることを手動で行う方法です。エラーの原因を特定したいときに便利です。</p>
+        <pre><code># 1. platex でコンパイル（.dvi を生成）
+platex report.tex
+
+# 2. DVI を PDF に変換
+dvipdfmx report.dvi</code></pre>
+
+        <h4>その他のコンパイル方法</h4>
+        <table>
+          <thead><tr><th>方法</th><th>コマンド</th><th>特徴</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>ptex2pdf</strong></td>
+              <td><code>ptex2pdf -l file.tex</code></td>
+              <td>platex + dvipdfmx を一括実行。安藤研の標準</td>
+            </tr>
+            <tr>
+              <td><strong>platex + dvipdfmx</strong></td>
+              <td><code>platex file.tex</code><br><code>dvipdfmx file.dvi</code></td>
+              <td>手動2ステップ。デバッグ時に有用</td>
+            </tr>
+            <tr>
+              <td><strong>latexmk</strong></td>
+              <td><code>latexmk -pdfdvi file.tex</code></td>
+              <td>依存関係を自動解析し必要な回数だけコンパイル。参照も自動解決</td>
+            </tr>
+            <tr>
+              <td><strong>lualatex</strong></td>
+              <td><code>lualatex file.tex</code></td>
+              <td>直接PDF生成。Unicode対応が強い。安藤研では使わない</td>
+            </tr>
+            <tr>
+              <td><strong>pdflatex</strong></td>
+              <td><code>pdflatex file.tex</code></td>
+              <td>直接PDF生成。英語論文で主流。日本語非対応</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="step-box">
+          <h4>latexmk の設定（便利）</h4>
+          <p><code>~/.latexmkrc</code> に以下を書いておくと、<code>latexmk file.tex</code> だけでplatex + dvipdfmx が走ります。</p>
+          <pre><code># ~/.latexmkrc
+$latex = 'platex -interaction=nonstopmode -halt-on-error %O %S';
+$dvipdf = 'dvipdfmx %O -o %D %S';
+$pdf_mode = 3;  # platex + dvipdfmx</code></pre>
+          <p>さらに <code>-pvc</code> オプションでファイル変更を監視し、保存するたびに自動コンパイルもできます:</p>
+          <pre><code>latexmk -pvc file.tex</code></pre>
+        </div>
+
+      </section>
+
+      <section>
+        <h3>TeXファイルの基本構造</h3>
+        <pre><code>\documentclass[a4paper,11pt]{jsarticle}
+
+% パッケージの読み込み
+\usepackage[dvipdfmx]{graphicx}  % 画像挿入
+\usepackage{amsmath,amssymb}     % 数式
+\usepackage{url}                 % URL表示
+
+\title{報告書タイトル}
+\author{菅沼}
+\date{2026年3月20日}
+
+\begin{document}
+\maketitle
+
+\section{はじめに}
+ここに本文を書く.
+
+\section{準備}
+定義や定理をまとめる.
+
+% 数式の例
+\begin{equation}
+  f(x) = \sum_{i=1}^{n} w_i |x_i - y_i|^2
+\end{equation}
+
+% 図の挿入
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figs/example.eps}
+  \caption{グラフ $G$ の構造.}
+  \label{fig:example}
+\end{figure}
+
+図\ref{fig:example}に示す通り...
+
+% 参考文献
+\begin{thebibliography}{00}
+\bibitem{pardalos1999}
+P.M. Pardalos and G. Xue: Algorithms for a class of isotonic
+regression problems. \textit{Algorithmica} \textbf{23} (1999) 211--222.
+
+\bibitem{semple2003}
+C. Semple and M. Steel: \textit{Phylogenetics}
+(Oxford University Press, 2003).
+\end{thebibliography}
+
+\end{document}</code></pre>
+      </section>
+
+      <section>
+        <h3>参考文献の書き方</h3>
+        <p>安藤研では <code>thebibliography</code> 環境と <code>\bibitem</code> を使って参考文献を管理します。</p>
+
+        <div class="step-box">
+          <h4>基本形</h4>
+          <pre><code>\begin{thebibliography}{00}
+
+\bibitem{ラベル名}
+著者名: タイトル. \textit{雑誌名} \textbf{巻} (年) ページ.
+
+\end{thebibliography}</code></pre>
+          <p><code>{00}</code> は参考文献の数が2桁であることを示します（文献数が多いときは <code>{99}</code> にする）。</p>
+        </div>
+
+        <h4>論文の場合</h4>
+        <pre><code>\bibitem{pardalos1999}
+P.M. Pardalos and G. Xue: Algorithms for a class of isotonic
+regression problems. \textit{Algorithmica} \textbf{23} (1999) 211--222.</code></pre>
+        <p>形式: <code>著者: タイトル. \textit{雑誌名} \textbf{巻} (年) ページ.</code></p>
+
+        <h4>書籍の場合</h4>
+        <pre><code>\bibitem{semple2003}
+C. Semple and M. Steel: \textit{Phylogenetics}
+(Oxford University Press, 2003).</code></pre>
+        <p>形式: <code>著者: \textit{書名} (出版社, 年).</code></p>
+
+        <h4>修士論文・卒業論文の場合</h4>
+        <pre><code>\bibitem{ishida25}
+石田京太郎: 重み付き$\ell_1$最良近似超距離木問題に対する
+部分木交換操作に基づく局所探索アルゴリズム.
+修士論文. 静岡大学大学院総合科学技術研究科, 2025年2月.</code></pre>
+        <p>形式: <code>著者: タイトル. 修士論文. 大学名, 年月.</code></p>
+
+        <h4>本文中での引用</h4>
+        <pre><code>Pardalosら\cite{pardalos1999}は、半順序上の単調回帰問題に対して...</code></pre>
+        <p><code>\cite{ラベル名}</code> と書くと、自動的に <code>[1]</code> のように番号が振られます。</p>
+
+        <div class="note">
+          <p>ラベル名は自由に決められますが、<code>著者名+年</code>（例: <code>pardalos1999</code>）や<code>著者イニシャル+年</code>（例: <code>AC11</code>）が一般的です。</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>よく使うコマンド</h3>
+        <table>
+          <thead><tr><th>コマンド</th><th>説明</th><th>出力例</th></tr></thead>
+          <tbody>
+            <tr><td><code>\section{}</code></td><td>節</td><td>1. はじめに</td></tr>
+            <tr><td><code>\subsection{}</code></td><td>小節</td><td>1.1 背景</td></tr>
+            <tr><td><code>\textbf{}</code></td><td>太字</td><td><strong>太字</strong></td></tr>
+            <tr><td><code>\textit{}</code></td><td>斜体</td><td><em>斜体</em></td></tr>
+            <tr><td><code>$...$</code></td><td>インライン数式</td><td>x = 1</td></tr>
+            <tr><td><code>\begin{equation}</code></td><td>別行立て数式</td><td>（番号付き）</td></tr>
+            <tr><td><code>\ref{}</code></td><td>参照</td><td>図1, 式(2)</td></tr>
+            <tr><td><code>\cite{}</code></td><td>文献引用</td><td>[1]</td></tr>
+            <tr><td><code>\bibitem{}</code></td><td>参考文献の定義</td><td>（thebibliography内）</td></tr>
+            <tr><td><code>\label{}</code></td><td>ラベル付け</td><td>（参照用）</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3>参考になるサイト</h3>
+        <ul>
+          <li><a href="https://texwiki.texjp.org/" target="_blank">TeX Wiki</a> — 日本語TeX環境の総合情報サイト。環境構築からパッケージの使い方まで網羅</li>
+          <li><a href="https://www.overleaf.com/learn" target="_blank">Overleaf Documentation</a> — LaTeXの書き方が項目別にまとまっている。英語だが網羅的</li>
+          <li><a href="https://mathlandscape.com/latex-style/" target="_blank">数式についてまとめたサイト</a> — LaTeX数式の記法・記号一覧</li>
+          <li><a href="https://www.tablesgenerator.com/" target="_blank">Tables Generator</a> — GUIで表を作ってLaTeXコードを自動生成できるツール</li>
+          <li><a href="https://detexify.kirelabs.org/" target="_blank">Detexify</a> — 手書きで記号を描くと対応するLaTeXコマンドを教えてくれる</li>
+          <li><a href="https://mathscinet.ams.org/" target="_blank">MathSciNet</a> — 論文のBibTeXデータをコピーできる（大学ネットワークからアクセス）</li>
+        </ul>
+      </section>
+
+    </div><!-- /tab-about -->
+
+    <!-- ============================================================ -->
+    <!-- 2. 安藤研TeXフォーマットメモ -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-format">
+
+      <section>
+        <h2>安藤研TeXフォーマットメモ</h2>
+        <p>安藤研のTeXには独自のルールやスタイルファイルがあります。文書の種類ごとにまとめます。</p>
+
+        <div class="step-box">
+          <h4>ルールファイルのダウンロード</h4>
+          <p>以下のmdファイルをダウンロードして、TeXリポジトリの<strong>CLAUDE.md</strong>に記載しておくと、AIエージェント（Claude Code等）がTeXの修正時にこのルールに従ってくれます。</p>
+          <p><a href="templates/andolab_tex_rules.md" download>andolab_tex_rules.md</a></p>
+        </div>
+      </section>
+
+      <!-- 共通ルール -->
+      <section>
+        <h3>共通ルール</h3>
+
+        <h4>句読点・記号</h4>
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th><th>例</th></tr></thead>
+          <tbody>
+            <tr><td>句読点</td><td>「、」「。」は使わない。<strong>「,」「.」に統一</strong></td><td><code>系統樹を推定することは, 重要な課題である.</code></td></tr>
+            <tr><td>読点の後</td><td><strong>半角スペース</strong>を入れる</td><td><code>ここで, $n = |X|$ である.</code></td></tr>
+            <tr><td>文末ピリオドの前</td><td>スペースなし</td><td><code>...で解くことができる.</code></td></tr>
+            <tr><td>キャプション末尾</td><td>必ずピリオド「.」をつける</td><td><code>\caption{グラフ $G$ の構造.}</code></td></tr>
+          </tbody>
+        </table>
+
+        <h4>スペーシング</h4>
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th><th>例</th></tr></thead>
+          <tbody>
+            <tr><td>半角と半角の間</td><td><strong>半角スペース</strong>を入れる</td><td><code>$k$SS操作 (Subtree Swap Operation)</code></td></tr>
+            <tr><td>日本語と数式の間</td><td>スペースなしでも可（TeXが自動調整）</td><td><code>問題は$\ell_2$単調回帰問題と呼ばれる.</code></td></tr>
+            <tr><td>英単語と日本語の間</td><td>スペースなしでも可</td><td><code>PAVアルゴリズムの一般化</code></td></tr>
+            <tr><td>引用の前</td><td><code>~</code>（改行禁止スペース）を使う</td><td><code>Ailon et al.~\cite{AC11}は</code></td></tr>
+            <tr><td>括弧の外側</td><td>半角スペースを入れる</td><td><code>SS操作 (Subtree Swap Operation) と呼ぶ.</code></td></tr>
+          </tbody>
+        </table>
+
+        <h4>数式の書き方</h4>
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th><th>例</th></tr></thead>
+          <tbody>
+            <tr><td>ローマン体の関数名</td><td><code>\mathrm{}</code> を使う</td><td><code>$\mathrm{O}(n \log n)$</code></td></tr>
+            <tr><td>太字ベクトル</td><td><code>\bm{}</code> や <code>\mathbb{}</code></td><td><code>$\mathbb{R}_+$</code></td></tr>
+            <tr><td>ノルム</td><td><code>\|\cdot\|</code></td><td><code>$\|D_{(T,h)} - M\|_2$</code></td></tr>
+            <tr><td>条件付き最適化</td><td><code>\mathrm{s.t.}</code></td><td><code>\mathrm{s.t.} \quad h \in \mathbb{R}^V</code></td></tr>
+            <tr><td>テキスト中の条件</td><td><code>\text{}</code> を使う</td><td><code>\text{if } p < \infty</code></td></tr>
+          </tbody>
+        </table>
+
+        <h4>図・表・アルゴリズム</h4>
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th></tr></thead>
+          <tbody>
+            <tr><td>画像形式</td><td>EPS形式を使う（tgif / gnuplot で生成）</td></tr>
+            <tr><td>画像挿入</td><td><code>\usepackage[dvipdfmx]{graphicx}</code> を使う</td></tr>
+            <tr><td>図のフォルダ</td><td>tgif図は <code>tgifs/</code>、gnuplot図は <code>gnuplots/</code> に置く</td></tr>
+            <tr><td>図の位置指定</td><td><code>[H]</code>（here パッケージ）または <code>[htbp]</code></td></tr>
+            <tr><td>サブキャプション</td><td><code>subcaption</code> パッケージ + <code>minipage</code> で並べる</td></tr>
+            <tr><td>表の罫線</td><td><code>booktabs</code> パッケージの <code>\toprule</code>, <code>\midrule</code>, <code>\bottomrule</code> を使う</td></tr>
+            <tr><td>アルゴリズム</td><td><code>\usepackage[lined,linesnumbered,boxed]{algorithm2e}</code></td></tr>
+            <tr><td>アルゴリズム名</td><td><code>\SetAlgorithmName{アルゴリズム}{...}{...}</code> で日本語化</td></tr>
+            <tr><td>入出力ラベル</td><td><code>\SetKwInput{KwIn}{入力}</code>, <code>\SetKwInput{KwOut}{出力}</code></td></tr>
+          </tbody>
+        </table>
+
+        <h4>参照・引用</h4>
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th><th>例</th></tr></thead>
+          <tbody>
+            <tr><td>図の参照</td><td><code>図\ref{fig:xxx}</code>（スペースなし）</td><td><code>図\ref{fig:ctree}に示す.</code></td></tr>
+            <tr><td>式の参照</td><td><code>式\eqref{eq:xxx}</code> を使う</td><td><code>式\eqref{eq:butt}は...</code></td></tr>
+            <tr><td>表の参照</td><td><code>表\ref{tab:xxx}</code></td><td><code>表\ref{tab:time}にまとめた.</code></td></tr>
+            <tr><td>アルゴリズム参照</td><td><code>アルゴリズム\ref{alg:xxx}</code></td><td><code>アルゴリズム\ref{alg:kss}は...</code></td></tr>
+            <tr><td>文献引用</td><td><code>\cite{xxx}</code>、複数著者は<code>~</code>で繋ぐ</td><td><code>石田\cite{ishida25}は...</code></td></tr>
+            <tr><td>ラベル命名規則</td><td>図: <code>fig:</code>、式: <code>eq:</code>、表: <code>tab:</code>、アルゴリズム: <code>alg:</code></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <h4>文体・構成</h4>
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th></tr></thead>
+          <tbody>
+            <tr><td>文体</td><td>「である・だ」調（敬体は使わない）</td></tr>
+            <tr><td>段落区切り</td><td><code>\par</code> で明示的に段落を区切ることが多い</td></tr>
+            <tr><td>定理環境</td><td>定理・補題・命題・定義を <code>\newtheorem</code> で定義して使う</td></tr>
+            <tr><td>証明</td><td>自分で <code>\proof</code> 〜 <code>\endproof</code> を定義するか、amsthmを使う</td></tr>
+            <tr><td>太字で用語定義</td><td>初出の用語は <code>\textbf{}</code> で太字にする</td></tr>
+            <tr><td>参考文献</td><td><code>thebibliography</code> + <code>\bibitem</code> を使う（BibTeX不使用）</td></tr>
+          </tbody>
+        </table>
+
+        <h4>参考文献の書式</h4>
+        <p><code>thebibliography</code> 環境 + <code>\bibitem</code> で書く（BibTeXは使わない）。書式は文献の種類で異なる。</p>
+
+        <p><strong>論文の場合:</strong></p>
+        <pre><code>著者名: タイトル. {\it 雑誌名} {\bf 巻} (年) ページ.</code></pre>
+        <p>実例:</p>
+        <pre><code>\bibitem{AC11}
+N. Ailon and M. Charikar: Fitting tree metrics: hierarchical
+clustering and phylogeny.
+{\it SIAM Journal on Computing} {\bf 40} (2011) 1275--1291.</code></pre>
+
+        <p><strong>書籍の場合:</strong></p>
+        <pre><code>著者名: \textit{書名} (出版社, 年).</code></pre>
+        <p>実例:</p>
+        <pre><code>\bibitem{semple2033}
+C. Semple and M. Steel: \textit{Phylogenetics}
+(Oxford University Press, 2003).</code></pre>
+
+        <p><strong>修士論文・卒業論文の場合:</strong></p>
+        <pre><code>著者名: タイトル. 修士論文. 大学名, 年月.</code></pre>
+        <p>実例:</p>
+        <pre><code>\bibitem{ishida25}
+石田京太郎: 重み付き$\ell_1$最良近似超距離木問題に対する
+部分木交換操作に基づく局所探索アルゴリズム.
+修士論文. 静岡大学大学院総合科学技術研究科, 2025年2月.</code></pre>
+
+        <table>
+          <thead><tr><th>項目</th><th>ルール</th></tr></thead>
+          <tbody>
+            <tr><td>雑誌名</td><td>イタリック体: <code>{\it 雑誌名}</code> または <code>\textit{雑誌名}</code></td></tr>
+            <tr><td>巻番号</td><td>太字: <code>{\bf 巻}</code> または <code>\textbf{巻}</code></td></tr>
+            <tr><td>ページ範囲</td><td>enダッシュ: <code>211--222</code>（ハイフン2つ）</td></tr>
+            <tr><td>著者の区切り</td><td><code>and</code> で繋ぐ（3人以上でも全員記載）</td></tr>
+            <tr><td>著者とタイトルの間</td><td>コロン + スペース: <code>著者: タイトル.</code></td></tr>
+            <tr><td>並び順</td><td>アルファベット順（著者の姓で）</td></tr>
+            <tr><td>ラベル名</td><td>著者イニシャル+年（例: <code>AC11</code>）または著者名+年（例: <code>pardalos1999</code>）</td></tr>
+          </tbody>
+        </table>
+
+        <h4>コンパイル</h4>
+        <p><code>ptex2pdf -l ファイル名.tex</code>（参照がある場合は2回実行）</p>
+      </section>
+
+      <!-- 報告書 -->
+      <section>
+        <h3>報告書</h3>
+        <p>進捗報告のたびに作成するTeXファイルです。</p>
+
+        <div class="step-box">
+          <h4>ドキュメントクラスとパッケージ</h4>
+          <pre><code>\documentclass[a4paper,dvipdfmx]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,boxed]{algorithm2e}
+\usepackage{here}
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{diagbox}
+
+\SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
+\SetKwInput{KwIn}{入力}
+\SetKwInput{KwOut}{出力}</code></pre>
+        </div>
+
+        <ul>
+          <li>クラス: <code>jsarticle</code>（日本語記事クラス）</li>
+          <li>スタイルファイル: 不要</li>
+          <li>構造: <code>\section</code> で節を分ける</li>
+          <li>報告書例: <a href="templates/report_example.zip" download>report_example.zip</a></li>
+        </ul>
+      </section>
+
+      <!-- アブストラクト -->
+      <section>
+        <h3>アブストラクト（ゼミ・卒研発表会）</h3>
+        <p>ゼミアブストラクトと卒研アブストラクトは同じフォーマットです。</p>
+
+        <div class="step-box">
+          <h4>ドキュメントクラスとスタイルファイル</h4>
+          <pre><code>\documentclass[9pt,a4paper,twocolumn]{jarticle}
+\usepackage{chukan}
+\author{菅沼 良規}
+\gakuseki{5021-6027}
+\title{タイトル}
+\lab{安藤研究室}
+\date{}</code></pre>
+        </div>
+
+        <ul>
+          <li>クラス: <code>jarticle</code>（9pt, A4, 2段組）</li>
+          <li>スタイルファイル: <strong><code>chukan.sty</code></strong>（専用のスタイルファイル。TeXファイルと同じディレクトリに置く）</li>
+          <li><code>\gakuseki{}</code> で学籍番号、<code>\lab{}</code> で研究室名を指定</li>
+          <li>A4 1ページに収める</li>
+          <li>ゼミアブストのタイトルには <code>\footnotemark[1]</code> で英語論文の情報を脚注に入れる</li>
+        </ul>
+
+        <div class="note">
+          <p>chukan.styのフォーマットは <a href="https://teams.microsoft.com/l/channel/19%3A6de579cf32d641caaab70f4b4ed462b1%40thread.tacv2/General?groupId=b7b00818-d9b5-4ded-85f2-c36750c0e77f&tenantId=e0d7dc00-4621-4fe0-90b1-df7b1b40b351" target="_blank">Teamsの共有ファイル</a>にあります。先輩の実例は <a href="templates/andolab_report_b4.zip" download>andolab_report_b4.zip</a> にも含まれています。</p>
+        </div>
+      </section>
+
+      <!-- 卒論 -->
+      <section>
+        <h3>卒業論文</h3>
+        <p>卒論は報告書やアブストラクトとは異なるクラス・スタイルファイルを使います。</p>
+
+        <div class="step-box">
+          <h4>ドキュメントクラスとスタイルファイル</h4>
+          <pre><code>\documentclass[11pt]{jreport}
+\usepackage{systhesisu}
+\usepackage{amsmath}
+\usepackage[lined,linesnumbered,boxed]{algorithm2e}
+\usepackage{graphicx}
+\usepackage[dvipdfmx]{color}
+\usepackage[margin=30mm]{geometry}
+
+\SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
+\SetKwInput{KwIn}{入力}
+\SetKwInput{KwOut}{出力}
+\renewcommand{\bibname}{参考文献}
+
+\title{タイトル}
+\author{菅沼  良規}
+\advisor{安藤  和敏}{教授}
+\reiwayear{7}
+\date{2026 年 2 月}</code></pre>
+        </div>
+
+        <ul>
+          <li>クラス: <code>jreport</code>（11pt、章立て構造）</li>
+          <li>スタイルファイル: <strong><code>systhesisu.sty</code></strong>（卒論専用。TeXファイルと同じディレクトリに置く）</li>
+          <li><code>\advisor{}</code> で指導教員名、<code>\reiwayear{}</code> で令和の年を指定</li>
+          <li>構造: <code>\chapter</code> で章を分ける（報告書の <code>\section</code> とは異なる）</li>
+          <li>目次: <code>\tableofcontents</code> で自動生成</li>
+          <li>参考文献: <code>\renewcommand{\bibname}{参考文献}</code> で日本語化</li>
+          <li>参考文献を目次に追加: <code>\addcontentsline{toc}{chapter}{参考文献}</code></li>
+        </ul>
+
+        <div class="note">
+          <p>systhesisu.styのフォーマットは <a href="https://teams.microsoft.com/l/channel/19%3A6de579cf32d641caaab70f4b4ed462b1%40thread.tacv2/General?groupId=b7b00818-d9b5-4ded-85f2-c36750c0e77f&tenantId=e0d7dc00-4621-4fe0-90b1-df7b1b40b351" target="_blank">Teamsの共有ファイル</a>にあります。先輩の実例は <a href="templates/andolab_report_b4.zip" download>andolab_report_b4.zip</a> にも含まれています。</p>
+        </div>
+      </section>
+
+      <!-- ゼミ本体 -->
+      <section>
+        <h3>ゼミ発表資料（本体）</h3>
+        <p>英語論文を日本語でまとめた発表資料です。</p>
+
+        <div class="step-box">
+          <h4>ドキュメントクラス</h4>
+          <pre><code>\documentclass[11pt]{jarticle}
+\usepackage{enumerate}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[lined,linesnumbered,boxed]{algorithm2e}
+\usepackage[dvipdfmx]{graphicx}</code></pre>
+        </div>
+
+        <ul>
+          <li>クラス: <code>jarticle</code>（11pt）</li>
+          <li>スタイルファイル: 不要</li>
+          <li>構造: <code>\section</code> で節を分ける</li>
+          <li>余白は手動で設定:
+            <pre><code>\setlength{\topmargin}{-0.7cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\textwidth}{15.9cm}
+\setlength{\textheight}{23.4cm}</code></pre>
+          </li>
+          <li>定理環境を自分で定義する:
+            <pre><code>\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{defe}{定義}[section]</code></pre>
+          </li>
+        </ul>
+      </section>
+
+      <!-- よく使うパッケージまとめ -->
+      <section>
+        <h3>よく使うパッケージ一覧</h3>
+        <table>
+          <thead><tr><th>パッケージ</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td><code>amsmath, amssymb</code></td><td>数式・数学記号</td></tr>
+            <tr><td><code>graphicx</code></td><td>画像挿入（EPS）</td></tr>
+            <tr><td><code>algorithm2e</code></td><td>擬似コード（アルゴリズム記述）</td></tr>
+            <tr><td><code>here</code></td><td>図の位置を強制（<code>[H]</code>オプション）</td></tr>
+            <tr><td><code>booktabs</code></td><td>表の罫線を美しくする</td></tr>
+            <tr><td><code>diagbox</code></td><td>表の左上セルに斜線を引く</td></tr>
+            <tr><td><code>comment</code></td><td>ブロックコメント</td></tr>
+            <tr><td><code>url</code></td><td>URLの表示</td></tr>
+            <tr><td><code>subcaption</code></td><td>サブキャプション（(a), (b)...）</td></tr>
+            <tr><td><code>geometry</code></td><td>余白の設定</td></tr>
+            <tr><td><code>pgfplots</code></td><td>TeX内でグラフを描画</td></tr>
+            <tr><td><code>enumerate</code></td><td>番号付きリストのカスタマイズ</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 文書種類の比較 -->
+      <section>
+        <h3>文書ごとの設定まとめ</h3>
+        <table>
+          <thead><tr><th></th><th>報告書</th><th>アブストラクト</th><th>卒論</th><th>ゼミ本体</th></tr></thead>
+          <tbody>
+            <tr><td>クラス</td><td><code>jsarticle</code></td><td><code>jarticle</code></td><td><code>jreport</code></td><td><code>jarticle</code></td></tr>
+            <tr><td>スタイル</td><td>なし</td><td><code>chukan.sty</code></td><td><code>systhesisu.sty</code></td><td>なし</td></tr>
+            <tr><td>構造</td><td><code>\section</code></td><td><code>\section</code></td><td><code>\chapter</code></td><td><code>\section</code></td></tr>
+            <tr><td>段組</td><td>1段</td><td>2段</td><td>1段</td><td>1段</td></tr>
+            <tr><td>フォントサイズ</td><td>指定なし</td><td>9pt</td><td>11pt</td><td>11pt</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div><!-- /tab-format -->
+
+  </div><!-- /subpage -->
+
   <footer><p>安藤研究室 新人ガイド</p></footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-bar').offsetTop - 20, behavior: 'smooth' });
+      });
+    });
+  </script>
 </body>
 </html>

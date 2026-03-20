@@ -83,6 +83,7 @@
       <button class="tab-btn active" data-tab="git">Git / GitHub</button>
       <button class="tab-btn" data-tab="ssh">SSH / Remote-SSH</button>
       <button class="tab-btn" data-tab="tmux">tmux</button>
+      <button class="tab-btn" data-tab="draw">tgif / gnuplot</button>
       <button class="tab-btn" data-tab="ai">AI</button>
     </div>
 
@@ -545,6 +546,150 @@ tmux a -t experiment</code></pre>
       </section>
 
     </div><!-- /tab-tmux -->
+
+    <!-- ============================================================ -->
+    <!-- 4. tgif / gnuplot -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-draw">
+
+      <section>
+        <h2>tgif / gnuplot</h2>
+        <p>安藤研の卒論・報告書では、図の作成に<strong>tgif</strong>（ベクター図形の描画）と<strong>gnuplot</strong>（グラフの描画）を使います。どちらもEPS形式で出力し、LaTeXに貼り付けます。</p>
+      </section>
+
+      <!-- tgif -->
+      <section>
+        <h3>tgif</h3>
+        <p>tgifはLinux上で動作するベクター描画ツールです。グラフ理論の図（頂点・辺・ラベルなど）を描くのに適しています。</p>
+
+        <h4>インストール</h4>
+        <pre><code>sudo apt install tgif</code></pre>
+
+        <h4>基本操作</h4>
+        <ul>
+          <li><code>tgif</code> で起動。GUIが開く</li>
+          <li>左のツールバーから丸（頂点）、線（辺）、テキスト（ラベル）などを選んで描画</li>
+          <li>保存すると <code>.obj</code> ファイルができる</li>
+          <li>EPS出力: メニューの <strong>File → Print → EPS</strong>、または以下のコマンド:
+            <pre><code>tgif -print -eps ファイル名.obj</code></pre>
+          </li>
+        </ul>
+
+        <h4>よく使う操作</h4>
+        <table>
+          <thead><tr><th>操作</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td>丸を描く</td><td>Ovalツールで描画。Shiftを押しながらで正円</td></tr>
+            <tr><td>線を描く</td><td>Polyツールで頂点間を結ぶ</td></tr>
+            <tr><td>テキスト追加</td><td>Textツールでクリック。数式は TeX 記法が使える</td></tr>
+            <tr><td>オブジェクトの移動</td><td>Selectツールでドラッグ</td></tr>
+            <tr><td>コピー</td><td>選択して Ctrl+C → Ctrl+V</td></tr>
+            <tr><td>整列</td><td>複数選択して Align メニューで整列</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          <p>tgifはリモートSSH先のLinuxマシンで使う場合、X11転送が必要です: <code>ssh -X andolab</code> で接続してから <code>tgif</code> を起動します。VSCode Remote-SSHではGUIが使えないので注意。</p>
+        </div>
+      </section>
+
+      <!-- gnuplot -->
+      <section>
+        <h3>gnuplot</h3>
+        <p>gnuplotはデータをグラフにプロットするツールです。実験結果の可視化に使います。</p>
+
+        <h4>インストール</h4>
+        <pre><code>sudo apt install gnuplot</code></pre>
+
+        <h4>基本的な使い方</h4>
+        <p>プロットスクリプト（<code>.gp</code> ファイル）を書いて実行します。</p>
+
+        <h4>スクリプトの例</h4>
+        <p>以下は実験データをEPSファイルに出力する例です。</p>
+        <pre><code># plot.gp
+# 出力形式（EPS）
+set terminal postscript eps enhanced color font "Times-Roman,20"
+set output "result.eps"
+
+# サイズと余白
+set size ratio 0
+set lmargin 8
+set rmargin 2
+set tmargin 2
+set bmargin 4
+
+# 軸ラベル
+set xlabel "time [sec]"
+set ylabel "function value"
+
+# グリッド
+set grid xtics ytics
+
+# y軸目盛り（整数）
+set format y "%.0f"
+
+# プロット
+plot "data.dat" using 1:2 with points pt 7 ps 1.4 lc rgb "blue" title "result"</code></pre>
+
+        <h4>実行方法</h4>
+        <pre><code>gnuplot plot.gp</code></pre>
+        <p>これで <code>result.eps</code> が生成されます。</p>
+
+        <h4>データファイルの形式</h4>
+        <p><code>.dat</code> ファイルはスペース区切りのテキストです。</p>
+        <pre><code># data.dat
+# x  y
+1  10
+2  15
+3  12
+4  20
+5  18</code></pre>
+
+        <h4>複数データの重ね描き</h4>
+        <pre><code>plot "data1.dat" using 1:2 with points pt 7 ps 1.4 lc rgb "red" title "method A", \
+     "data2.dat" using 1:2 with points pt 7 ps 1.4 lc rgb "blue" title "method B"</code></pre>
+
+        <h4>よく使うオプション</h4>
+        <table>
+          <thead><tr><th>オプション</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>with points</code></td><td>散布図</td></tr>
+            <tr><td><code>with lines</code></td><td>折れ線グラフ</td></tr>
+            <tr><td><code>with linespoints</code></td><td>線＋点</td></tr>
+            <tr><td><code>pt 7</code></td><td>点の形（7 = 塗りつぶし丸）</td></tr>
+            <tr><td><code>ps 1.4</code></td><td>点のサイズ</td></tr>
+            <tr><td><code>lc rgb "blue"</code></td><td>色の指定</td></tr>
+            <tr><td><code>set key right top</code></td><td>凡例の位置</td></tr>
+            <tr><td><code>set xrange [0:10]</code></td><td>x軸の範囲指定</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- LaTeXへの貼り付け -->
+      <section>
+        <h3>LaTeXへの貼り付け方</h3>
+        <p>tgifやgnuplotで生成したEPSファイルは、LaTeXの <code>figure</code> 環境で挿入します。</p>
+        <pre><code>\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{tgifs/graph.eps}
+  \caption{グラフ $G$ の構造.}
+  \label{fig:graph}
+\end{figure}</code></pre>
+
+        <h4>ファイル配置のおすすめ</h4>
+        <p>卒論リポジトリでは以下のようにフォルダ分けすると管理しやすいです。</p>
+        <pre><code>sotsuron/main/
+  sotsuron_main_suganuma.tex
+  tgifs/          ← tgifで作った図（.obj と .eps）
+  gnuplots/       ← gnuplotのスクリプトとデータ（.gp, .dat, .eps）</code></pre>
+
+        <div class="note">
+          <h4>EPSファイルについて</h4>
+          <p>EPS（Encapsulated PostScript）はベクター形式の画像です。拡大しても劣化しないため、論文の図に適しています。LaTeXで使うには <code>\usepackage[dvipdfmx]{graphicx}</code> が必要です。</p>
+        </div>
+      </section>
+
+    </div><!-- /tab-draw -->
 
     <!-- ============================================================ -->
     <!-- 5. AIエージェント -->
