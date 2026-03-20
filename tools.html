@@ -5,155 +5,664 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>研究で使えるツール — 安藤研究室</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* ===== Tab UI ===== */
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 0.65rem 1.3rem;
+      border: none;
+      background: #e8eaf0;
+      color: #555;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+      bottom: -2px;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn:hover {
+      background: #d0d4e0;
+      color: #1a1a2e;
+    }
+    .tab-btn.active {
+      background: #fff;
+      color: #0f3460;
+      border-bottom: 2px solid #0f3460;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    /* コマンド説明用 */
+    .cmd-desc {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .step-box {
+      background: #f7f9fc;
+      border: 1px solid #e0e4ec;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .step-box h4 {
+      color: #0f3460;
+      margin-bottom: 0.5rem;
+    }
+    @media (max-width: 600px) {
+      .tab-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.82rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="header-inner">
       <h1>研究で使えるツール</h1>
-      <p class="subtitle">Git, VSCode, tmux, SSH, AI活用</p>
+      <p class="subtitle">Git, SSH, VSCode, tmux, AI</p>
     </div>
   </header>
   <div class="subpage">
     <a href="index.html" class="back-link">&larr; ホームに戻る</a>
 
-    <!-- Git -->
-    <section>
-      <h2>Git / GitHub</h2>
-      <p>ソースコードはGitで管理する。HTTPS接続ではなくSSH接続を使う。</p>
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="git">Git / GitHub</button>
+      <button class="tab-btn" data-tab="ssh">SSH / Remote-SSH</button>
+      <button class="tab-btn" data-tab="vscode">VSCode</button>
+      <button class="tab-btn" data-tab="tmux">tmux</button>
+      <button class="tab-btn" data-tab="ai">AI</button>
+    </div>
 
-      <h3>GitHubへのSSH接続</h3>
-      <ol>
-        <li>公開鍵と秘密鍵を作る（名前はGitHub用だとわかるようにする）</li>
-        <li>公開鍵をGitHubにアップロードする</li>
-        <li><code>~/.ssh/config</code> に設定を記述する</li>
-        <li>接続テスト: <code>ssh -T git@github.com</code></li>
-      </ol>
-      <pre><code>Host github.com
+    <!-- ============================================================ -->
+    <!-- 1. Git / GitHub -->
+    <!-- ============================================================ -->
+    <div class="tab-content active" id="tab-git">
+
+      <section>
+        <h2>Git / GitHub</h2>
+        <p>TeXの文章やプログラムのバージョン管理には<strong>Git</strong>が有用です。異なるバージョンのプログラムを作りたいときはブランチを作ればよく、元のバージョンに戻したり見直したりするときに便利です。GitHubをクラウドとして使えばバックアップになるし、異なるPC間で共通のファイルを編集できます。</p>
+        <p>以下は、初心者が0からGitHubを使えるようになるためのチュートリアルです。</p>
+      </section>
+
+      <!-- インストールと初期設定 -->
+      <section>
+        <h3>1. Gitのインストール</h3>
+        <p><strong>Windows</strong>の場合は <a href="https://git-scm.com/" target="_blank">git-scm.com</a> からインストーラをダウンロードしてインストールします。<strong>Ubuntu / WSL</strong>の場合は以下のコマンドでインストールできます。</p>
+        <pre><code>sudo apt update
+sudo apt install git</code></pre>
+        <p>インストールできたか確認:</p>
+        <pre><code>git --version</code></pre>
+
+        <h3>2. 初期設定</h3>
+        <p>Gitを使う前に、名前とメールアドレスを設定します。これはコミット履歴に記録されます。</p>
+        <pre><code>git config --global user.name "あなたの名前"
+git config --global user.email "your-email@example.com"</code></pre>
+        <p>設定を確認:</p>
+        <pre><code>git config --list</code></pre>
+        <div class="note">
+          <p><code>~/.gitconfig</code> にエイリアスやアカウントの設定が書かれます。例えば <code>git ac</code> で add と commit を同時にできるエイリアスを追加することも可能です。</p>
+        </div>
+      </section>
+
+      <!-- GitHubアカウントとSSH鍵 -->
+      <section>
+        <h3>3. GitHubアカウントの作成</h3>
+        <p><a href="https://github.com/" target="_blank">github.com</a> でアカウントを作成してください。</p>
+
+        <h3>4. SSH鍵の設定（重要）</h3>
+        <p>GitHubとの接続にはHTTPS接続とSSH接続がありますが、<strong>SSH接続</strong>を使います。SSH鍵を設定すると、毎回パスワードを入力せずにGitHubとやり取りできます。</p>
+
+        <div class="step-box">
+          <h4>Step 1: SSH鍵ペアを作成する</h4>
+          <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com" -f ~/.ssh/id_ed25519_github</code></pre>
+          <p>パスフレーズを聞かれますが、空でもOKです。<code>~/.ssh/</code> に以下の2ファイルが作られます:</p>
+          <ul>
+            <li><code>id_ed25519_github</code> — 秘密鍵（絶対に他人に見せない）</li>
+            <li><code>id_ed25519_github.pub</code> — 公開鍵（GitHubにアップロードする）</li>
+          </ul>
+        </div>
+
+        <div class="step-box">
+          <h4>Step 2: 公開鍵をGitHubに登録する</h4>
+          <p>まず公開鍵の内容をコピーします:</p>
+          <pre><code>cat ~/.ssh/id_ed25519_github.pub</code></pre>
+          <p>表示された文字列を全てコピーし、GitHubの <strong>Settings &rarr; SSH and GPG keys &rarr; New SSH key</strong> に貼り付けて保存します。</p>
+        </div>
+
+        <div class="step-box">
+          <h4>Step 3: SSH設定ファイルを書く</h4>
+          <p><code>~/.ssh/config</code> に以下を追記します（ファイルがなければ新規作成）:</p>
+          <pre><code>Host github.com
     HostName github.com
     User git
     IdentitiesOnly yes
     IdentityFile ~/.ssh/id_ed25519_github</code></pre>
+        </div>
 
-      <h3>よく使うコマンド</h3>
-      <table>
-        <thead><tr><th>コマンド</th><th>説明</th></tr></thead>
-        <tbody>
-          <tr><td><code>git remote -v</code></td><td>リモートURL確認</td></tr>
-          <tr><td><code>git push -u origin &lt;ブランチ名&gt;</code></td><td>新ブランチをリモートにプッシュ</td></tr>
-          <tr><td><code>git checkout &lt;コミットID&gt;</code></td><td>特定のコミットを見る</td></tr>
-          <tr><td><code>git pull --rebase</code></td><td>リモートの変更を取り込む</td></tr>
-          <tr><td><code>git fetch</code></td><td>リモートの情報を更新</td></tr>
-        </tbody>
-      </table>
+        <div class="step-box">
+          <h4>Step 4: 接続テスト</h4>
+          <pre><code>ssh -T git@github.com</code></pre>
+          <p><code>Hi ユーザー名! You've successfully authenticated...</code> と表示されれば成功です。</p>
+        </div>
+      </section>
 
-      <h3>ブランチの仕組み</h3>
-      <p>ブランチの正体は<strong>ポインタ</strong>。コミット履歴上のあるコミットを指しているだけ。</p>
-      <ul>
-        <li><code>git fetch</code> — リモートのコミット履歴をローカルにアップデート</li>
-        <li><code>git merge origin/&lt;ブランチ名&gt;</code> — その情報を今いるブランチに取り込む</li>
-        <li><code>git pull</code> = <code>git fetch</code> + <code>git merge</code></li>
-      </ul>
+      <!-- リポジトリ作成 -->
+      <section>
+        <h3>5. リポジトリの作成</h3>
 
-      <h3>merge と rebase の違い</h3>
-      <table>
-        <thead><tr><th></th><th>merge</th><th>rebase</th></tr></thead>
-        <tbody>
-          <tr><td>やること</td><td>2つのブランチを合流</td><td>コミットを付け替え</td></tr>
-          <tr><td>履歴</td><td>分岐が残る（安全）</td><td>一直線になる</td></tr>
-          <tr><td>向いてる用途</td><td>共有ブランチ</td><td>個人ブランチ</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- VSCode -->
-    <section>
-      <h2>VSCode</h2>
-      <h3>TailscaleでSSHする方法</h3>
-      <ol>
-        <li>各PCでTailscaleをインストールし、同じアカウントでログイン</li>
-        <li>Tailscaleを起動する（Ubuntuでは <code>sudo tailscale up</code>）</li>
-        <li>SSHしたいサーバのVPN上のIPアドレスをコピーして接続</li>
-      </ol>
-
-      <h3>公開鍵認証でSSHを楽にする</h3>
-      <p><code>ssh andolab</code> だけで接続できるようにする。</p>
-      <ol>
-        <li>公開鍵・秘密鍵を作る</li>
-        <li>公開鍵をサーバーに送信し <code>authorized_keys</code> に追加</li>
-        <li><code>~/.ssh/config</code> に設定を記述</li>
-      </ol>
-
-      <h3>便利なショートカット</h3>
-      <table>
-        <thead><tr><th>ショートカット</th><th>動作</th></tr></thead>
-        <tbody>
-          <tr><td><code>Ctrl + Alt + V</code></td><td>VSCodeを開く</td></tr>
-          <tr><td><code>Ctrl + Alt + S</code></td><td>Remote-SSH接続</td></tr>
-          <tr><td><code>Ctrl + Alt + W</code></td><td>WSL接続</td></tr>
-          <tr><td><code>Ctrl + Alt + Q</code></td><td>接続を切る</td></tr>
-          <tr><td><code>Ctrl + K → S</code></td><td>keybinding.jsonを開く</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- tmux -->
-    <section>
-      <h2>tmux</h2>
-      <p>1つのターミナル上で複数の仮想端末を管理できるツール。SSH接続が切れてもプログラムを実行し続けられる。</p>
-
-      <h3>3階層構造</h3>
-      <table>
-        <thead><tr><th>概念</th><th>説明</th></tr></thead>
-        <tbody>
-          <tr><td>セッション</td><td>作業単位の一番大きな枠。SSHを切断しても残る</td></tr>
-          <tr><td>ウィンドウ</td><td>タブのようなもの。用途ごとに分ける</td></tr>
-          <tr><td>ペイン</td><td>ウィンドウ内の分割画面</td></tr>
-        </tbody>
-      </table>
-
-      <h3>長時間処理の鉄則</h3>
-      <div class="note">
-        <p>tmuxは「SSH切断に強い」だけ。ローカルPCをスリープしても処理は止まる。<br>
-        <strong>長時間処理は必ず「スリープしないマシン（サーバ）」上で使うこと。</strong><br>
-        exitせずdetachが正解。</p>
-      </div>
-    </section>
-
-    <!-- AI活用 -->
-    <section>
-      <h2>AI活用</h2>
-      <div class="note">
-        <h4>学習の流れ（推奨）</h4>
+        <h4>新しいリポジトリをGitHubで作成する場合</h4>
         <ol>
-          <li><strong>ChatGPTでやり方・理由・不明点を聞く</strong> — ここは「不確実でもいい場所」</li>
-          <li><strong>実際に試す</strong> — 環境・バージョン・自分の手で確認</li>
-          <li><strong>うまくいったこと・腑に落ちたことだけをノートに残す</strong> — ノートは「検証済みの事実の集合」</li>
+          <li>GitHubで「New repository」をクリックし、リポジトリ名を入力して作成</li>
+          <li>ローカルで以下を実行:</li>
         </ol>
-      </div>
-    </section>
+        <pre><code># プロジェクトフォルダに移動
+cd ~/my-project
 
-    <!-- プログラミング -->
-    <section>
-      <h2>プログラミングTips</h2>
-      <h3>心得</h3>
-      <ul>
-        <li>リファクタリングに終わりはない。見直す度に改善していく</li>
-        <li>関数の共通部分は必ずサブルーチン化する</li>
-        <li>無駄な処理、変数、引数は削除する</li>
-        <li>条件分岐はブロックが小さくなるようにする</li>
-      </ul>
-      <h3>命名規則</h3>
-      <ul>
-        <li>関数名は基本「<code>動詞_名詞</code>」</li>
-        <li>変数名にアンダースコアは使わない（関数名と紛らわしいため）。変数はキャメルケース</li>
-      </ul>
-      <h3>C言語の注意点</h3>
-      <ul>
-        <li>サブ関数内で <code>malloc</code>/<code>free</code> すると断片化が起きる場合がある。メイン関数内で確保して使い回す</li>
-        <li><code>malloc</code> したら <code>free</code> を忘れずに</li>
-      </ul>
-    </section>
-  </div>
+# Gitリポジトリを初期化
+git init
+
+# 最初のファイルを追加してコミット
+git add .
+git commit -m "Initial commit"
+
+# リモートリポジトリを登録（SSHのURLを使う）
+git remote add origin git@github.com:ユーザー名/リポジトリ名.git
+
+# プッシュ
+git push -u origin main</code></pre>
+
+        <h4>既存のリポジトリをクローンする場合</h4>
+        <pre><code>git clone git@github.com:ユーザー名/リポジトリ名.git</code></pre>
+        <p>cloneするときは必ず<strong>SSHのURL</strong>を使ってください。HTTPSにしてしまった場合は以下で変更できます:</p>
+        <pre><code>git remote set-url origin git@github.com:ユーザー名/リポジトリ名.git</code></pre>
+        <p>現在のリモートURLを確認:</p>
+        <pre><code>git remote -v</code></pre>
+      </section>
+
+      <!-- add / commit / push / pull -->
+      <section>
+        <h3>6. 基本の流れ: add / commit / push / pull</h3>
+        <p>Gitの基本操作は以下の4ステップです。</p>
+
+        <div class="step-box">
+          <h4>ファイルを変更したら:</h4>
+          <pre><code># 1. 変更したファイルをステージング（コミット対象に追加）
+git add ファイル名
+# または全ファイルをまとめて追加
+git add .
+
+# 2. コミット（変更をローカルに記録）
+git commit -m "変更内容の説明"
+
+# 3. プッシュ（GitHubにアップロード）
+git push</code></pre>
+        </div>
+
+        <div class="step-box">
+          <h4>他のPCでの変更を取り込むとき:</h4>
+          <pre><code># リモートの変更をローカルに取り込む
+git pull</code></pre>
+        </div>
+
+        <h4>よく使うコマンド一覧</h4>
+        <table>
+          <thead><tr><th>コマンド</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>git status</code></td><td>現在の状態を確認（変更ファイル、ステージング状況）</td></tr>
+            <tr><td><code>git log</code></td><td>コミット履歴を表示</td></tr>
+            <tr><td><code>git diff</code></td><td>変更内容を確認</td></tr>
+            <tr><td><code>git add .</code></td><td>全ての変更をステージングに追加</td></tr>
+            <tr><td><code>git commit -m "メッセージ"</code></td><td>変更をコミット</td></tr>
+            <tr><td><code>git push</code></td><td>リモートにプッシュ</td></tr>
+            <tr><td><code>git pull</code></td><td>リモートの変更を取り込む</td></tr>
+            <tr><td><code>git pull --rebase</code></td><td>リモートの変更をrebaseで取り込む</td></tr>
+            <tr><td><code>git fetch</code></td><td>リモートの情報を更新（マージはしない）</td></tr>
+            <tr><td><code>git remote -v</code></td><td>リモートURL確認</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ブランチ操作 -->
+      <section>
+        <h3>7. ブランチ操作</h3>
+        <p>ブランチは「別バージョン」を作るための仕組みです。元のコードに影響を与えずに新しい機能を開発したり実験したりできます。</p>
+
+        <h4>ブランチの仕組み</h4>
+        <p>ブランチの正体は<strong>ポインタ</strong>です。コミット履歴上のあるコミットを指しているだけです。</p>
+        <ul>
+          <li><code>git fetch</code> -- リモートのコミット履歴をローカルにアップデートし、<code>origin/&lt;ブランチ名&gt;</code> にリモートのポインタ情報が入る</li>
+          <li><code>git merge origin/&lt;ブランチ名&gt;</code> -- その情報を今いるブランチに取り込む</li>
+          <li><code>git pull</code> = <code>git fetch</code> + <code>git merge</code></li>
+        </ul>
+
+        <h4>基本操作</h4>
+        <pre><code># ブランチ一覧を表示
+git branch
+
+# 新しいブランチを作成して切り替え
+git checkout -b 新しいブランチ名
+
+# ブランチを切り替え
+git checkout ブランチ名
+
+# 新しいブランチをリモートにプッシュ（初回）
+git push -u origin ブランチ名
+# 以降は git push のみでOK
+
+# ブランチを統合（mainにいる状態で）
+git merge 統合したいブランチ名
+
+# ブランチを削除（ローカル）
+git branch -d ブランチ名
+
+# ブランチを削除（リモート）
+git push origin --delete ブランチ名</code></pre>
+
+        <h4>リモートのブランチをローカルに取り込む</h4>
+        <pre><code>git fetch
+git checkout -b ローカルブランチ名 origin/リモートブランチ名</code></pre>
+        <p>これでローカルブランチがリモートブランチと同じコミットを指すようになります。以降は <code>git pull</code> や <code>git push</code> が自動的に対応します。</p>
+
+        <h4>merge と rebase の違い</h4>
+        <table>
+          <thead><tr><th></th><th>merge</th><th>rebase</th></tr></thead>
+          <tbody>
+            <tr><td>やること</td><td>2つのブランチを合流</td><td>コミットを付け替え</td></tr>
+            <tr><td>履歴</td><td>分岐が残る（安全）</td><td>一直線になる（きれい）</td></tr>
+            <tr><td>向いてる用途</td><td>共有ブランチ</td><td>個人ブランチ</td></tr>
+            <tr><td>注意点</td><td>merge commitが作られる</td><td>コミットIDが変わるため共有後は危険</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 特定のコミットに戻す -->
+      <section>
+        <h3>8. 特定のコミットに戻したいとき</h3>
+        <p>まず <code>git log</code> でコミットIDを確認します。</p>
+
+        <h4>1. そのコミットのコードを見たいだけ</h4>
+        <pre><code>git checkout &lt;コミットID&gt;</code></pre>
+        <p>最新に戻るには <code>git checkout &lt;ブランチ名&gt;</code>。プログラムだけコピペしたいならこれが一番お手軽です。</p>
+
+        <h4>2. そのコミットに戻して、それ以降を削除</h4>
+        <pre><code>git reset --hard &lt;コミットID&gt;</code></pre>
+        <div class="note"><p>取り消せないので注意。確信があるときだけ使ってください。</p></div>
+
+        <h4>3. そのコミットに戻して、履歴も残す</h4>
+        <pre><code>git revert &lt;IDn&gt; &lt;IDn-1&gt; ... &lt;ID1&gt;</code></pre>
+        <p>そのコミットより後のIDに対して逆順で revert します。履歴が残るので安全です。</p>
+      </section>
+
+      <!-- コンフリクト解決 -->
+      <section>
+        <h3>9. コンフリクトの解決</h3>
+        <p>複数の場所から同じファイルを編集すると、コンフリクト（衝突）が起きることがあります。</p>
+
+        <h4>rebase で解決する場合</h4>
+        <pre><code>git pull --rebase
+git status              # コンフリクトファイルを確認
+# エディタでファイルを開いてコンフリクト箇所を修正
+git add .
+git rebase --continue
+git push</code></pre>
+        <p>merge の場合は <code>rebase</code> の部分を <code>merge</code> に読み替えてください。<code>git pull</code> の代わりに <code>git fetch</code> &rarr; <code>git rebase origin/&lt;ブランチ名&gt;</code> でもOKです。</p>
+
+        <h4>リモートが完全に正しい場合</h4>
+        <pre><code>git reset --hard origin/&lt;ブランチ名&gt;</code></pre>
+
+        <h4>ファイルごとに選択する場合</h4>
+        <pre><code># リモートが正しいファイル
+git checkout --theirs &lt;ファイル名&gt;
+
+# ローカルが正しいファイル
+git checkout --ours &lt;ファイル名&gt;</code></pre>
+
+        <h4>ローカルが正しくてリモートを上書きしたい場合</h4>
+        <pre><code>git push -f origin &lt;ブランチ名&gt;</code></pre>
+        <div class="note"><p>強制プッシュはリモートの履歴を上書きするので、自分だけのブランチでのみ使ってください。</p></div>
+      </section>
+
+    </div><!-- /tab-git -->
+
+    <!-- ============================================================ -->
+    <!-- 2. SSH / Remote-SSH -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-ssh">
+
+      <section>
+        <h2>SSH / Remote-SSH</h2>
+        <p>自分のPCでプログラムを実行するとスペック不足でフリーズすることがあります。<strong>SSH（Secure Shell）</strong>はネットワークを通じて他のPCに安全に接続し、遠隔操作する技術です。研究室に行かなくても、自宅から研究室のPCを操作できます。</p>
+        <p>VSCodeの<strong>Remote-SSH拡張機能</strong>を使えば、自分のPCのVSCode上で研究室PCの環境でコーディングできます。ファイルもターミナルもリモート側のものを直接操作でき、あたかも研究室のPCの前にいるかのように作業できます。</p>
+      </section>
+
+      <section>
+        <h3>SSHの仕組み</h3>
+        <p>SSHは「公開鍵暗号方式」を使って安全に通信します。</p>
+        <ol>
+          <li><strong>秘密鍵</strong>（自分のPCに保存、絶対に人に見せない）と<strong>公開鍵</strong>（接続先サーバに置く）のペアを作る</li>
+          <li>接続時、サーバが公開鍵で暗号化したデータを送り、クライアントが秘密鍵で復号して認証する</li>
+          <li>パスワード不要で安全に接続できる</li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>ネットワーク接続: Tailscaleの導入</h3>
+        <p>研究室のPCに外部から接続するには、同じネットワーク上にいる必要があります。<strong>Tailscale</strong>はVPNを簡単に構築できるツールで、異なるネットワークにあるPC同士を仮想的に同じネットワークに接続できます。</p>
+        <ol>
+          <li>各PCで<a href="https://tailscale.com/" target="_blank">Tailscale</a>をインストールし、同じアカウントでログイン</li>
+          <li>Tailscaleを起動する
+            <ul>
+              <li>Windowsではアプリを開いて起動</li>
+              <li>Ubuntuでは <code>sudo tailscale up</code></li>
+            </ul>
+          </li>
+          <li>Tailscaleの管理画面からSSHしたいサーバのIPアドレスを確認</li>
+        </ol>
+        <p>接続テスト:</p>
+        <pre><code>ssh ユーザー名@IPアドレス
+# 例: ssh andolab@100.94.152.23</code></pre>
+      </section>
+
+      <section>
+        <h3>SSH鍵の設定（公開鍵認証）</h3>
+        <p>毎回パスワードを入力しなくて済むように、SSH鍵ペアを設定します。</p>
+
+        <div class="step-box">
+          <h4>Step 1: 鍵ペアを作成する</h4>
+          <p>鍵の名前に接続先サーバ名を入れておくとわかりやすいです。</p>
+          <pre><code>ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_andolab</code></pre>
+        </div>
+
+        <div class="step-box">
+          <h4>Step 2: 公開鍵をサーバに送信する</h4>
+          <pre><code>ssh-copy-id -i ~/.ssh/id_ed25519_andolab.pub ユーザー名@IPアドレス</code></pre>
+          <p>これでサーバの <code>~/.ssh/authorized_keys</code> に公開鍵が自動的に追加されます。</p>
+        </div>
+
+        <div class="step-box">
+          <h4>Step 3: SSH設定ファイルを書く</h4>
+          <p><code>~/.ssh/config</code> に以下を追記します:</p>
+          <pre><code>Host andolab
+    HostName 100.94.152.23
+    User andolab
+    IdentitiesOnly yes
+    IdentityFile ~/.ssh/id_ed25519_andolab</code></pre>
+          <p>これで <code>ssh andolab</code> だけで接続できるようになります。</p>
+        </div>
+
+        <div class="step-box">
+          <h4>Step 4: 接続テスト</h4>
+          <pre><code>ssh andolab</code></pre>
+          <p>パスワードなしで接続できれば成功です。</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>VSCode Remote-SSH の設定</h3>
+        <p>VSCodeの拡張機能「<strong>Remote - SSH</strong>」をインストールすると、VSCode上からSSH接続先のファイルを直接編集できるようになります。</p>
+        <ol>
+          <li>VSCodeの拡張機能から「Remote - SSH」をインストール</li>
+          <li>コマンドパレット（<code>Ctrl + Shift + P</code>）で「Remote-SSH: Connect to Host...」を選択</li>
+          <li>先ほど <code>~/.ssh/config</code> に設定したホスト名（例: <code>andolab</code>）を選択</li>
+          <li>接続が完了すると、VSCodeのファイルエクスプローラーやターミナルがリモートPCのものになる</li>
+        </ol>
+        <div class="note">
+          <p>VSCodeはWindowsのソフトウェアですが、WSL上のUbuntuやリモートサーバで開けるのは、裏でサーバプロセスを立てて接続しているからです。</p>
+        </div>
+      </section>
+
+    </div><!-- /tab-ssh -->
+
+    <!-- ============================================================ -->
+    <!-- 3. VSCode -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-vscode">
+
+      <section>
+        <h2>VSCode</h2>
+        <p>Visual Studio Code（VSCode）は、軽量で拡張性の高いコードエディタです。Remote-SSHやWSLとの連携で、さまざまな環境でのコーディングが可能になります。</p>
+      </section>
+
+      <section>
+        <h3>便利なショートカットキー</h3>
+        <p><code>keybinding.json</code> は <code>Ctrl + K &rarr; S</code> で開けます。以下は筆者が設定しているカスタムショートカットです。</p>
+        <table>
+          <thead><tr><th>ショートカット</th><th>動作</th></tr></thead>
+          <tbody>
+            <tr><td><code>Ctrl + Alt + V</code></td><td>VSCodeを開く</td></tr>
+            <tr><td><code>Ctrl + Alt + S</code></td><td>Remote-SSH接続</td></tr>
+            <tr><td><code>Ctrl + Alt + W</code></td><td>WSL接続</td></tr>
+            <tr><td><code>Ctrl + Alt + Q</code></td><td>接続を切る</td></tr>
+            <tr><td><code>Ctrl + Alt + C</code></td><td>そのファイルのフォルダにcd</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3>設定ファイル</h3>
+        <ul>
+          <li><code>settings.json</code> でVSCodeの拡張機能や設定を記述できる</li>
+          <li><code>&gt; Open Remote Setting</code> でリモート側の設定を開ける</li>
+          <li><code>Open Default Setting</code> -- 約8000行の全設定ファイルが開く</li>
+          <li><code>Open User Setting</code> -- GUIの設定画面が開く</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>プログラミングTips</h3>
+        <h4>心得</h4>
+        <ul>
+          <li>リファクタリングに終わりはない。見直す度に改善していく</li>
+          <li>関数の共通部分は必ずサブルーチン化する</li>
+          <li>無駄な処理、変数、引数は削除する</li>
+          <li>条件分岐はブロックが小さくなるようにする</li>
+        </ul>
+        <h4>命名規則</h4>
+        <ul>
+          <li>関数名は基本「<code>動詞_名詞</code>」</li>
+          <li>変数名にアンダースコアは使わない（関数名と紛らわしいため）。変数はキャメルケース</li>
+        </ul>
+        <h4>C言語の注意点</h4>
+        <ul>
+          <li>サブ関数内で <code>malloc</code>/<code>free</code> すると断片化が起きる場合がある。メイン関数内で確保して使い回す</li>
+          <li><code>malloc</code> したら <code>free</code> を忘れずに</li>
+        </ul>
+      </section>
+
+    </div><!-- /tab-vscode -->
+
+    <!-- ============================================================ -->
+    <!-- 4. tmux -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-tmux">
+
+      <section>
+        <h2>tmux</h2>
+        <p>SSHして実験を開始しても、自分のPCがスリープした瞬間にSSHセッションが切断され、実行中のシェルスクリプトも停止してしまいます。それを防ぐのが<strong>tmux</strong>です。</p>
+        <p>tmuxは1つのターミナル上で複数の仮想端末を管理できるツールで、SSH接続が切れてもプログラムを実行し続けられます。</p>
+        <ul>
+          <li>SSH接続が切れてもプログラムを実行し続けられる</li>
+          <li>複数の作業画面（タブのようなもの）を切り替えられる</li>
+          <li>画面を分割して同時に複数の作業ができる</li>
+          <li>作業状態を保持したまま離脱（detach）し、後で再接続できる</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>3階層構造</h3>
+        <table>
+          <thead><tr><th>概念</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><strong>セッション</strong></td><td>作業単位の一番大きな枠。SSHを切断しても残る。最も重要な概念</td></tr>
+            <tr><td><strong>ウィンドウ</strong></td><td>タブのようなもの。用途ごとに分ける（run, log, monitorなど）</td></tr>
+            <tr><td><strong>ペイン</strong></td><td>ウィンドウ内を上下・左右に分割した画面。長時間実行だけなら不要</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3>基本コマンド</h3>
+        <p>tmuxの操作は<strong>プレフィックスキー</strong>（デフォルトは <code>Ctrl + B</code>）の後にキーを押す形式です。</p>
+
+        <h4>セッション操作（ターミナルから実行）</h4>
+        <table>
+          <thead><tr><th>コマンド</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>tmux new -s セッション名</code></td><td>名前付きセッションを作成（推奨）</td></tr>
+            <tr><td><code>tmux ls</code></td><td>セッション一覧を表示</td></tr>
+            <tr><td><code>tmux a -t セッション名</code></td><td>セッションに再接続（attach）</td></tr>
+            <tr><td><code>tmux kill-session -t セッション名</code></td><td>セッションを完全に終了</td></tr>
+          </tbody>
+        </table>
+
+        <h4>tmux内の操作（プレフィックス + キー）</h4>
+        <table>
+          <thead><tr><th>キー</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>d</code></td><td>セッションからデタッチ（離脱）</td></tr>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>c</code></td><td>新しいウィンドウを作成</td></tr>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>n</code></td><td>次のウィンドウへ移動</td></tr>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>p</code></td><td>前のウィンドウへ移動</td></tr>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>0-9</code></td><td>番号指定でウィンドウ移動</td></tr>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>,</code></td><td>ウィンドウ名を変更</td></tr>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>&amp;</code></td><td>ウィンドウを閉じる</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3>設定ファイル</h3>
+        <p>設定ファイルの場所: <code>~/.tmux.conf</code>（最初は存在しないことが多いので、自分で作成します）</p>
+        <p>例: プレフィックスキーを <code>Ctrl+B</code> から <code>Ctrl+A</code> に変更する:</p>
+        <pre><code># ~/.tmux.conf
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix</code></pre>
+        <p>設定を反映:</p>
+        <pre><code>tmux source-file ~/.tmux.conf</code></pre>
+      </section>
+
+      <section>
+        <h3>長時間処理の実行方法（鉄板手順）</h3>
+
+        <div class="note">
+          <p><strong>大前提:</strong> tmuxは「SSH切断に強い」だけです。ローカルPCをスリープしても処理が続くわけではありません。<strong>長時間処理は必ず「スリープしないマシン（サーバ）」上で実行してください。</strong></p>
+        </div>
+
+        <div class="step-box">
+          <h4>実行手順</h4>
+          <pre><code># 1. サーバにSSH接続
+ssh andolab
+
+# 2. tmuxセッションを作成
+tmux new -s experiment
+
+# 3. 実験スクリプトを実行
+bash run_experiment.sh
+
+# 4. デタッチ（Ctrl+B → d）
+#    ※ exitは絶対にしない！</code></pre>
+        </div>
+
+        <div class="step-box">
+          <h4>再接続</h4>
+          <pre><code># サーバにSSH接続
+ssh andolab
+
+# セッションに再接続
+tmux a -t experiment</code></pre>
+        </div>
+
+        <h4>操作ごとの結果まとめ</h4>
+        <table>
+          <thead><tr><th>操作</th><th>結果</th></tr></thead>
+          <tbody>
+            <tr><td><code>Ctrl+B</code> &rarr; <code>d</code>（デタッチ）</td><td>セッションは残る（安全）</td></tr>
+            <tr><td><code>exit</code></td><td>そのウィンドウのbashが終了。最後のウィンドウならセッションも終了</td></tr>
+            <tr><td>SSH切断</td><td>tmuxがあれば問題なし</td></tr>
+            <tr><td>ローカルPCスリープ</td><td>サーバ上なら処理は継続。ローカルなら停止</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          <p><strong>まとめ:</strong> tmuxは「切断に強い作業場」。長時間処理は「スリープしないマシン」で。<strong>exitせずdetachが正解。</strong></p>
+        </div>
+      </section>
+
+    </div><!-- /tab-tmux -->
+
+    <!-- ============================================================ -->
+    <!-- 5. AIエージェント -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-ai">
+
+      <section>
+        <h2>AI</h2>
+        <p>これからの時代、人間はもうコードを書かないのではないか？</p>
+        <p>最近のAIエージェントは、自分のPCのファイルを読み込んで理解したり、ネットから必要な知識を探してきて、文章やプログラムを書いて実行・デバッグしてくれたり、他のアプリと連携してくれます。正直、僕らより圧倒的に頭いいです。</p>
+        <p>ここまでの内容（Git、SSH、tmuxの設定）も、全部AIに聞けば勝手に設定してくれます。</p>
+      </section>
+
+      <section>
+        <h3>おすすめ: Claude Code</h3>
+        <p>筆者が使っているのは<strong>Claude Code</strong>（Anthropic社）です。ターミナル上で動作するAIエージェントで、以下のようなことができます:</p>
+        <ul>
+          <li>プロジェクト内のファイルを読み込んで文脈を理解する</li>
+          <li>コードを書く・修正する・デバッグする</li>
+          <li>シェルコマンドを実行する</li>
+          <li>Webから情報を検索する</li>
+          <li>Git操作やファイル管理を自動化する</li>
+        </ul>
+        <p>研究で使うくらいなら<strong>Proプラン</strong>で十分です。無料のAIエージェントがあれば、まずはそれを使ってみるのもいいでしょう。</p>
+      </section>
+
+      <section>
+        <h3>AIとの付き合い方</h3>
+        <div class="note">
+          <h4>学習の流れ（推奨）</h4>
+          <ol>
+            <li><strong>AIにやり方・理由・不明点を聞く</strong> -- ここは「不確実でもいい場所」</li>
+            <li><strong>実際に試す</strong> -- 環境・バージョン・自分の手で確認</li>
+            <li><strong>うまくいったこと・腑に落ちたことだけをノートに残す</strong> -- ノートは「検証済みの事実の集合」</li>
+          </ol>
+        </div>
+        <p>AIの出力を鵜呑みにせず、自分で検証する癖をつけましょう。AIは強力なツールですが、最終的に判断するのは自分です。</p>
+      </section>
+
+    </div><!-- /tab-ai -->
+
+  </div><!-- /subpage -->
+
   <footer><p>安藤研究室 新人ガイド</p></footer>
+
+  <script>
+    // Tab switching logic
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Deactivate all tabs
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        // Activate selected tab
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        // Scroll to top of content
+        window.scrollTo({ top: document.querySelector('.tab-bar').offsetTop - 20, behavior: 'smooth' });
+      });
+    });
+  </script>
 </body>
 </html>

@@ -258,16 +258,26 @@
         <table>
           <thead><tr><th>時期</th><th>イベント</th></tr></thead>
           <tbody>
-            <tr><td>4月</td><td>研究室ガイダンス・新入生歓迎</td></tr>
-            <tr><td>4〜6月</td><td>基礎学習・論文調査</td></tr>
+            <tr><td>4月23日</td><td>4年生メンバー確定</td></tr>
+            <tr><td>4月24日</td><td>初顔合わせ</td></tr>
+            <tr><td>5月13日</td><td>ゼミの日程打ち合わせ</td></tr>
+            <tr><td>5, 6, 7月</td><td>週一でゼミ発表</td></tr>
+            <tr><td>7月16日</td><td>ゼミのアブストラクト提出期限</td></tr>
+            <tr><td>7月14〜18日</td><td>発表練習（18日はみんなの前で）</td></tr>
             <tr><td>7月19日（土）</td><td>セミナー発表会（終日）</td></tr>
-            <tr><td>7〜8月</td><td>卒論テーマ決定・研究開始</td></tr>
-            <tr><td>9〜12月</td><td>研究本格化・週次報告書の提出</td></tr>
-            <tr><td>11月7日</td><td>BBQ</td></tr>
-            <tr><td>1月</td><td>卒論執筆</td></tr>
+            <tr><td>7月30日〜9月27日</td><td>夏休み</td></tr>
+            <tr><td>8月27, 28日</td><td>院試（一般）</td></tr>
+            <tr><td>9月5日</td><td>合格発表（一般）</td></tr>
+            <tr><td>10, 11, 12, 1月</td><td>卒業研究</td></tr>
+            <tr><td>1月ごろ</td><td>卒論まとめ開始</td></tr>
+            <tr><td>2月3日ごろ</td><td>アブストラクト完成</td></tr>
+            <tr><td>卒研発表前一週間</td><td>発表練習</td></tr>
             <tr><td>1月15日（木）午後</td><td>修士中間発表会</td></tr>
-            <tr><td>2月10日（火）</td><td>修論発表会（終日）</td></tr>
-            <tr><td>2月12日（木）</td><td>卒研発表会（終日）</td></tr>
+            <tr><td>2月10日（火）終日</td><td>修論発表会</td></tr>
+            <tr><td>2月12日（木）終日</td><td>卒研発表会</td></tr>
+            <tr><td>2月末ごろまで</td><td>プログラム整理</td></tr>
+            <tr><td>3月17日</td><td>学位授与式・祝賀会</td></tr>
+            <tr><td>11月7日</td><td>BBQ</td></tr>
           </tbody>
         </table>
       </section>
@@ -277,9 +287,9 @@
           <thead><tr><th>日程</th><th>内容</th></tr></thead>
           <tbody>
             <tr><td>5月7日</td><td>新入生歓迎会</td></tr>
-            <tr><td>7月19日</td><td>セミナー発表会打ち上げ</td></tr>
-            <tr><td>1月15日</td><td>修士中間発表会打ち上げ</td></tr>
-            <tr><td>2月12日</td><td>修論・卒研発表会打ち上げ</td></tr>
+            <tr><td>7月19日</td><td>発表会打ち上げ</td></tr>
+            <tr><td>1月15日</td><td>中間発表打ち上げ</td></tr>
+            <tr><td>2月12日</td><td>卒研打ち上げ</td></tr>
           </tbody>
         </table>
       </section>
@@ -296,39 +306,60 @@
   <script>
     // ===== Data =====
     var dayEvents = [
-      { month: 4, day: 1, text: "研究室ガイダンス", type: "academic" },
+      { month: 4, day: 23, text: "4年生メンバー確定", type: "academic" },
+      { month: 4, day: 24, text: "初顔合わせ", type: "academic" },
       { month: 5, day: 7, text: "新入生歓迎会", type: "party" },
+      { month: 5, day: 13, text: "ゼミの日程打ち合わせ", type: "academic" },
+      { month: 7, day: 16, text: "ゼミのアブストラクト提出期限", type: "academic" },
+      { month: 7, day: 14, text: "発表練習（14〜18日）", type: "presentation" },
+      { month: 7, day: 18, text: "発表練習（みんなの前で）", type: "presentation" },
       { month: 7, day: 19, text: "セミナー発表会（終日）", type: "presentation" },
       { month: 7, day: 19, text: "発表会打ち上げ", type: "party" },
+      { month: 8, day: 27, text: "院試（一般）27〜28日", type: "academic" },
+      { month: 9, day: 5, text: "合格発表（一般）", type: "academic" },
       { month: 11, day: 7, text: "BBQ", type: "bbq" },
-      { month: 1, day: 15, text: "修士中間発表会", type: "presentation" },
+      { month: 1, day: 15, text: "修士中間発表会（午後）", type: "presentation" },
       { month: 1, day: 15, text: "中間発表打ち上げ", type: "party" },
+      { month: 2, day: 3, text: "アブストラクト完成（目安）", type: "academic" },
       { month: 2, day: 10, text: "修論発表会（終日）", type: "presentation" },
       { month: 2, day: 12, text: "卒研発表会（終日）", type: "presentation" },
-      { month: 2, day: 12, text: "修論・卒研打ち上げ", type: "party" },
+      { month: 2, day: 12, text: "卒研打ち上げ", type: "party" },
+      { month: 3, day: 17, text: "学位授与式・祝賀会", type: "academic" },
     ];
     var rangeEvents = [
-      { months: [4,5,6], text: "基礎学習・論文調査", type: "range" },
-      { months: [7,8], text: "卒論テーマ決定・研究開始", type: "range" },
-      { months: [9,10,11,12], text: "研究本格化・週次報告書", type: "range" },
-      { months: [1], text: "卒論執筆", type: "range" },
+      { months: [5,6,7], text: "週一でゼミ発表", type: "range" },
+      { months: [7], text: "7/14〜18 発表練習", type: "range" },
+      { months: [7,8,9], text: "7/30〜9/27 夏休み", type: "range" },
+      { months: [10,11,12,1], text: "卒業研究", type: "range" },
+      { months: [1], text: "卒論まとめ開始", type: "range" },
+      { months: [2], text: "卒研発表前一週間 発表練習", type: "range" },
+      { months: [2], text: "2月末ごろまでプログラム整理", type: "range" },
     ];
     var yearEvents = [
-      { month: 4, text: "研究室ガイダンス", type: "academic" },
-      { month: 4, text: "基礎学習・論文調査 開始", type: "research" },
+      { month: 4, text: "4/23 4年生メンバー確定", type: "academic" },
+      { month: 4, text: "4/24 初顔合わせ", type: "academic" },
       { month: 5, text: "5/7 新入生歓迎会", type: "party" },
+      { month: 5, text: "5/13 ゼミの日程打ち合わせ", type: "academic" },
+      { month: 5, text: "週一でゼミ発表 開始", type: "research" },
+      { month: 7, text: "7/16 アブストラクト提出期限", type: "academic" },
+      { month: 7, text: "7/14〜18 発表練習", type: "presentation" },
       { month: 7, text: "7/19 セミナー発表会（終日）", type: "presentation" },
       { month: 7, text: "7/19 発表会打ち上げ", type: "party" },
-      { month: 7, text: "卒論テーマ決定", type: "research" },
-      { month: 9, text: "研究本格化", type: "research" },
-      { month: 10, text: "週次報告書 開始", type: "research" },
+      { month: 7, text: "7/30〜 夏休み", type: "academic" },
+      { month: 8, text: "8/27〜28 院試（一般）", type: "academic" },
+      { month: 9, text: "9/5 合格発表（一般）", type: "academic" },
+      { month: 9, text: "〜9/27 夏休み終了", type: "academic" },
+      { month: 10, text: "卒業研究", type: "research" },
       { month: 11, text: "11/7 BBQ", type: "bbq" },
-      { month: 1, text: "卒論執筆", type: "research" },
-      { month: 1, text: "1/15 修士中間発表会", type: "presentation" },
+      { month: 1, text: "卒論まとめ開始", type: "research" },
+      { month: 1, text: "1/15 修士中間発表会（午後）", type: "presentation" },
       { month: 1, text: "1/15 中間発表打ち上げ", type: "party" },
+      { month: 2, text: "2/3ごろ アブストラクト完成", type: "academic" },
       { month: 2, text: "2/10 修論発表会（終日）", type: "presentation" },
       { month: 2, text: "2/12 卒研発表会（終日）", type: "presentation" },
-      { month: 2, text: "2/12 修論・卒研打ち上げ", type: "party" },
+      { month: 2, text: "2/12 卒研打ち上げ", type: "party" },
+      { month: 2, text: "2月末までプログラム整理", type: "research" },
+      { month: 3, text: "3/17 学位授与式・祝賀会", type: "academic" },
     ];
 
     var monthNames = ["","1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
