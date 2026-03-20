@@ -28,7 +28,7 @@
       color: #fff;
     }
 
-    /* ===== Monthly View (Google Calendar style) ===== */
+    /* ===== Monthly View ===== */
     .gcal {
       background: #fff;
       border-radius: 10px;
@@ -63,14 +63,12 @@
       color: #555;
       transition: background 0.15s;
     }
-    .gcal-nav:hover {
-      background: #f0f2f5;
-    }
+    .gcal-nav:hover { background: #f0f2f5; }
 
-    /* Day-of-week header row */
+    /* Day-of-week header */
     .gcal-dow {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       border-bottom: 1px solid #e5e7eb;
     }
     .gcal-dow-cell {
@@ -83,63 +81,93 @@
     .gcal-dow-cell.sun { color: #dc2626; }
     .gcal-dow-cell.sat { color: #2563eb; }
 
-    /* Calendar grid */
-    .gcal-grid {
+    /* Week rows */
+    .gcal-body {
+      /* Always 6 rows */
+    }
+    .gcal-week {
+      position: relative;
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
-    }
-    .gcal-cell {
-      min-height: 100px;
-      border-right: 1px solid #f0f0f0;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      min-height: 96px;
       border-bottom: 1px solid #f0f0f0;
-      padding: 0.25rem;
-      display: flex;
-      flex-direction: column;
     }
-    .gcal-cell:nth-child(7n) {
-      border-right: none;
+    .gcal-week:last-child { border-bottom: none; }
+
+    .gcal-day {
+      padding: 2px 4px;
+      border-right: 1px solid #f0f0f0;
+      min-height: 96px;
+      overflow: hidden;
     }
-    .gcal-cell.outside {
-      background: #fafafa;
-    }
-    .gcal-cell-num {
+    .gcal-day:nth-child(7) { border-right: none; }
+    .gcal-day.outside { background: #fafafa; }
+
+    .gcal-day-num {
       font-size: 0.85rem;
       font-weight: 600;
       color: #333;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      margin-bottom: 0.2rem;
+      margin-bottom: 1px;
     }
-    .gcal-cell.outside .gcal-cell-num { color: #bbb; }
-    .gcal-cell-num.sun { color: #dc2626; }
-    .gcal-cell-num.sat { color: #2563eb; }
-    .gcal-cell.outside .gcal-cell-num.sun { color: #f0a0a0; }
-    .gcal-cell.outside .gcal-cell-num.sat { color: #a0b8f0; }
-    .gcal-cell-num.today {
+    .gcal-day.outside .gcal-day-num { color: #bbb; }
+    .gcal-day-num.sun { color: #dc2626; }
+    .gcal-day-num.sat { color: #2563eb; }
+    .gcal-day.outside .gcal-day-num.sun { color: #f0a0a0; }
+    .gcal-day.outside .gcal-day-num.sat { color: #a0b8f0; }
+    .gcal-day-num.today {
       background: #0f3460;
       color: #fff !important;
     }
-    .gcal-event {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      margin-bottom: 0.15rem;
-      line-height: 1.3;
-      cursor: default;
+
+    /* Single-day event chip (inside day cell) */
+    .gcal-chip {
+      font-size: 0.7rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      margin-bottom: 1px;
+      line-height: 1.35;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .gcal-event.academic { background: #dbeafe; color: #1e40af; }
-    .gcal-event.party { background: #fce7f3; color: #9d174d; }
-    .gcal-event.research { background: #d1fae5; color: #065f46; }
-    .gcal-event.presentation { background: #fef3c7; color: #92400e; }
-    .gcal-event.bbq { background: #ffedd5; color: #c2410c; }
-    .gcal-event.range { background: #e0e7ff; color: #3730a3; border-left: 3px solid #6366f1; }
+    .gcal-chip.academic { background: #dbeafe; color: #1e40af; }
+    .gcal-chip.party { background: #fce7f3; color: #9d174d; }
+    .gcal-chip.research { background: #d1fae5; color: #065f46; }
+    .gcal-chip.presentation { background: #fef3c7; color: #92400e; }
+    .gcal-chip.bbq { background: #ffedd5; color: #c2410c; }
+
+    /* Multi-day bar (absolutely positioned over week row) */
+    .gcal-bar {
+      position: absolute;
+      height: 18px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 1px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 2;
+      box-sizing: border-box;
+      line-height: 16px;
+    }
+    .gcal-bar.academic { background: #dbeafe; color: #1e40af; }
+    .gcal-bar.party { background: #fce7f3; color: #9d174d; }
+    .gcal-bar.research { background: #d1fae5; color: #065f46; }
+    .gcal-bar.presentation { background: #fef3c7; color: #92400e; }
+    .gcal-bar.bbq { background: #ffedd5; color: #c2410c; }
+    .gcal-bar.vacation { background: #e0e7ff; color: #3730a3; }
+
+    /* Push single-day events down to make room for bars */
+    .gcal-day-events {
+      margin-top: 0;
+    }
 
     /* Event list below monthly cal */
     .gcal-events-below {
@@ -162,7 +190,13 @@
     .gcal-ev-date {
       font-weight: 600;
       color: #0f3460;
-      min-width: 48px;
+      min-width: 80px;
+    }
+    .gcal-ev-badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
     }
     .gcal-ev-none {
       color: #aaa;
@@ -201,11 +235,14 @@
     .cal-event.research { background: #d1fae5; color: #065f46; }
     .cal-event.presentation { background: #fef3c7; color: #92400e; }
     .cal-event.bbq { background: #ffedd5; color: #c2410c; }
+    .cal-event.vacation { background: #e0e7ff; color: #3730a3; }
 
     @media (max-width: 700px) {
       .calendar-grid { grid-template-columns: repeat(2, 1fr); }
-      .gcal-cell { min-height: 70px; }
-      .gcal-event { font-size: 0.65rem; }
+      .gcal-day { min-height: 72px; }
+      .gcal-week { min-height: 72px; }
+      .gcal-chip { font-size: 0.6rem; }
+      .gcal-bar { font-size: 0.6rem; height: 16px; line-height: 14px; }
       .gcal-title { font-size: 1.1rem; }
     }
     @media (max-width: 400px) {
@@ -238,7 +275,7 @@
           <button class="gcal-nav" id="next-month">&rarr;</button>
         </div>
         <div class="gcal-dow" id="gcal-dow"></div>
-        <div class="gcal-grid" id="gcal-grid"></div>
+        <div class="gcal-body" id="gcal-body"></div>
         <div class="gcal-events-below" id="gcal-events-below"></div>
       </div>
     </div>
@@ -260,6 +297,9 @@
           <tbody>
             <tr><td>4月23日</td><td>4年生メンバー確定</td></tr>
             <tr><td>4月24日</td><td>初顔合わせ</td></tr>
+            <tr><td>5月1日</td><td>M1先輩の自己紹介・研究紹介</td></tr>
+            <tr><td>5月7日</td><td>新入生歓迎会</td></tr>
+            <tr><td>5月8日</td><td>M2先輩の自己紹介・研究紹介</td></tr>
             <tr><td>5月13日</td><td>ゼミの日程打ち合わせ</td></tr>
             <tr><td>5, 6, 7月</td><td>週一でゼミ発表</td></tr>
             <tr><td>7月16日</td><td>ゼミのアブストラクト提出期限</td></tr>
@@ -305,67 +345,78 @@
 
   <script>
     // ===== Data =====
-    var dayEvents = [
-      { month: 4, day: 23, text: "4年生メンバー確定", type: "academic" },
-      { month: 4, day: 24, text: "初顔合わせ", type: "academic" },
-      { month: 5, day: 7, text: "新入生歓迎会", type: "party" },
-      { month: 5, day: 13, text: "ゼミの日程打ち合わせ", type: "academic" },
-      { month: 7, day: 16, text: "ゼミのアブストラクト提出期限", type: "academic" },
-      { month: 7, day: 14, text: "発表練習（14〜18日）", type: "presentation" },
-      { month: 7, day: 18, text: "発表練習（みんなの前で）", type: "presentation" },
-      { month: 7, day: 19, text: "セミナー発表会（終日）", type: "presentation" },
-      { month: 7, day: 19, text: "発表会打ち上げ", type: "party" },
-      { month: 8, day: 27, text: "院試（一般）27〜28日", type: "academic" },
-      { month: 9, day: 5, text: "合格発表（一般）", type: "academic" },
-      { month: 11, day: 7, text: "BBQ", type: "bbq" },
-      { month: 1, day: 15, text: "修士中間発表会（午後）", type: "presentation" },
-      { month: 1, day: 15, text: "中間発表打ち上げ", type: "party" },
-      { month: 2, day: 3, text: "アブストラクト完成（目安）", type: "academic" },
-      { month: 2, day: 10, text: "修論発表会（終日）", type: "presentation" },
-      { month: 2, day: 12, text: "卒研発表会（終日）", type: "presentation" },
-      { month: 2, day: 12, text: "卒研打ち上げ", type: "party" },
-      { month: 3, day: 17, text: "学位授与式・祝賀会", type: "academic" },
-    ];
-    var rangeEvents = [
-      { months: [5,6,7], text: "週一でゼミ発表", type: "range" },
-      { months: [7], text: "7/14〜18 発表練習", type: "range" },
-      { months: [7,8,9], text: "7/30〜9/27 夏休み", type: "range" },
-      { months: [10,11,12,1], text: "卒業研究", type: "range" },
-      { months: [1], text: "卒論まとめ開始", type: "range" },
-      { months: [2], text: "卒研発表前一週間 発表練習", type: "range" },
-      { months: [2], text: "2月末ごろまでプログラム整理", type: "range" },
-    ];
-    var yearEvents = [
-      { month: 4, text: "4/23 4年生メンバー確定", type: "academic" },
-      { month: 4, text: "4/24 初顔合わせ", type: "academic" },
-      { month: 5, text: "5/7 新入生歓迎会", type: "party" },
-      { month: 5, text: "5/13 ゼミの日程打ち合わせ", type: "academic" },
-      { month: 5, text: "週一でゼミ発表 開始", type: "research" },
-      { month: 7, text: "7/16 アブストラクト提出期限", type: "academic" },
-      { month: 7, text: "7/14〜18 発表練習", type: "presentation" },
-      { month: 7, text: "7/19 セミナー発表会（終日）", type: "presentation" },
-      { month: 7, text: "7/19 発表会打ち上げ", type: "party" },
-      { month: 7, text: "7/30〜 夏休み", type: "academic" },
-      { month: 8, text: "8/27〜28 院試（一般）", type: "academic" },
-      { month: 9, text: "9/5 合格発表（一般）", type: "academic" },
-      { month: 9, text: "〜9/27 夏休み終了", type: "academic" },
-      { month: 10, text: "卒業研究", type: "research" },
-      { month: 11, text: "11/7 BBQ", type: "bbq" },
-      { month: 1, text: "卒論まとめ開始", type: "research" },
-      { month: 1, text: "1/15 修士中間発表会（午後）", type: "presentation" },
-      { month: 1, text: "1/15 中間発表打ち上げ", type: "party" },
-      { month: 2, text: "2/3ごろ アブストラクト完成", type: "academic" },
-      { month: 2, text: "2/10 修論発表会（終日）", type: "presentation" },
-      { month: 2, text: "2/12 卒研発表会（終日）", type: "presentation" },
-      { month: 2, text: "2/12 卒研打ち上げ", type: "party" },
-      { month: 2, text: "2月末までプログラム整理", type: "research" },
-      { month: 3, text: "3/17 学位授与式・祝賀会", type: "academic" },
-    ];
-
+    var baseYear = 2025;
     var monthNames = ["","1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
     var dayNames = ["日","月","火","水","木","金","土"];
     var order = [4,5,6,7,8,9,10,11,12,1,2,3];
-    var baseYear = 2025;
+
+    function getYearForMonth(m) { return m >= 4 ? baseYear : baseYear + 1; }
+
+    // Linearize date for comparison (academic year Apr-Mar)
+    function toLinear(m, d) {
+      var adj = m >= 4 ? m : m + 12;
+      return adj * 100 + d;
+    }
+
+    // Single-day events
+    var dayEvents = [
+      { month:4, day:23, text:"4年生メンバー確定", type:"academic" },
+      { month:4, day:24, text:"初顔合わせ", type:"academic" },
+      { month:5, day:1,  text:"M1先輩 自己紹介・研究紹介", type:"academic" },
+      { month:5, day:7,  text:"新入生歓迎会", type:"party" },
+      { month:5, day:8,  text:"M2先輩 自己紹介・研究紹介", type:"academic" },
+      { month:5, day:13, text:"ゼミの日程打ち合わせ", type:"academic" },
+      { month:7, day:16, text:"アブストラクト提出期限", type:"academic" },
+      { month:7, day:19, text:"セミナー発表会（終日）", type:"presentation" },
+      { month:7, day:19, text:"発表会打ち上げ", type:"party" },
+      { month:8, day:27, text:"院試1日目", type:"academic" },
+      { month:8, day:28, text:"院試2日目", type:"academic" },
+      { month:9, day:5,  text:"合格発表（一般）", type:"academic" },
+      { month:11,day:7,  text:"BBQ", type:"bbq" },
+      { month:1, day:15, text:"修士中間発表会（午後）", type:"presentation" },
+      { month:1, day:15, text:"中間発表打ち上げ", type:"party" },
+      { month:2, day:3,  text:"アブストラクト完成（目安）", type:"academic" },
+      { month:2, day:10, text:"修論発表会（終日）", type:"presentation" },
+      { month:2, day:12, text:"卒研発表会（終日）", type:"presentation" },
+      { month:2, day:12, text:"卒研打ち上げ", type:"party" },
+      { month:3, day:17, text:"学位授与式・祝賀会", type:"academic" },
+    ];
+
+    // Multi-day (range) events — displayed as spanning bars
+    var rangeEvents = [
+      { sm:5, sd:1, em:7, ed:31, text:"週一ゼミ", type:"research" },
+      { sm:7, sd:14, em:7, ed:18, text:"発表練習", type:"presentation" },
+      { sm:7, sd:30, em:9, ed:27, text:"夏休み", type:"vacation" },
+      { sm:10,sd:1, em:1, ed:31, text:"卒業研究", type:"research" },
+      { sm:2, sd:5,  em:2, ed:11, text:"発表練習", type:"presentation" },
+    ];
+
+    // Year view events
+    var yearEvents = [
+      { month:4, text:"4/23 4年生メンバー確定", type:"academic" },
+      { month:4, text:"4/24 初顔合わせ", type:"academic" },
+      { month:5, text:"5/1 M1先輩 自己紹介・研究紹介", type:"academic" },
+      { month:5, text:"5/7 新入生歓迎会", type:"party" },
+      { month:5, text:"5/8 M2先輩 自己紹介・研究紹介", type:"academic" },
+      { month:5, text:"5/13 ゼミ日程打ち合わせ", type:"academic" },
+      { month:5, text:"週一ゼミ 開始", type:"research" },
+      { month:7, text:"7/16 アブストラクト提出期限", type:"academic" },
+      { month:7, text:"7/14〜18 発表練習", type:"presentation" },
+      { month:7, text:"7/19 セミナー発表会", type:"presentation" },
+      { month:7, text:"7/30〜 夏休み", type:"vacation" },
+      { month:8, text:"8/27〜28 院試（一般）", type:"academic" },
+      { month:9, text:"9/5 合格発表", type:"academic" },
+      { month:9, text:"〜9/27 夏休み終了", type:"vacation" },
+      { month:10,text:"卒業研究 開始", type:"research" },
+      { month:11,text:"11/7 BBQ", type:"bbq" },
+      { month:1, text:"卒論まとめ開始", type:"research" },
+      { month:1, text:"1/15 修士中間発表会", type:"presentation" },
+      { month:2, text:"2/3ごろ アブストラクト完成", type:"academic" },
+      { month:2, text:"2/5〜11 発表練習", type:"presentation" },
+      { month:2, text:"2/10 修論発表会", type:"presentation" },
+      { month:2, text:"2/12 卒研発表会", type:"presentation" },
+      { month:3, text:"3/17 学位授与式・祝賀会", type:"academic" },
+    ];
 
     // ===== View Toggle =====
     function showView(v) {
@@ -380,13 +431,11 @@
     // ===== Monthly View =====
     var currentMonthIdx = 0;
 
-    function getYearForMonth(m) { return m >= 4 ? baseYear : baseYear + 1; }
-
     function renderMonth(idx) {
       currentMonthIdx = idx;
       var m = order[idx];
       var y = getYearForMonth(m);
-      var firstDay = new Date(y, m - 1, 1).getDay();
+      var firstDow = new Date(y, m - 1, 1).getDay();
       var daysInMonth = new Date(y, m, 0).getDate();
       var prevDays = new Date(y, m - 1, 0).getDate();
 
@@ -401,42 +450,127 @@
         dow.innerHTML += '<div class="' + cls + '">' + dayNames[d] + '</div>';
       }
 
-      // Grid
-      var grid = document.getElementById("gcal-grid");
-      grid.innerHTML = "";
-      var totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
-
-      for (var i = 0; i < totalCells; i++) {
-        var cell = document.createElement("div");
-        cell.className = "gcal-cell";
-        var dayNum, isOutside = false, cellMonth = m, cellDay;
-
-        if (i < firstDay) {
+      // Build cell info array (always 42 cells = 6 rows)
+      var cells = [];
+      for (var i = 0; i < 42; i++) {
+        var cellDay, cellMonth, cellYear, isOutside;
+        if (i < firstDow) {
           isOutside = true;
-          cellDay = prevDays - firstDay + i + 1;
-          cell.classList.add("outside");
-        } else if (i >= firstDay + daysInMonth) {
+          cellDay = prevDays - firstDow + i + 1;
+          cellMonth = m === 1 ? 12 : m - 1;
+          cellYear = m === 1 ? y - 1 : y;
+        } else if (i >= firstDow + daysInMonth) {
           isOutside = true;
-          cellDay = i - firstDay - daysInMonth + 1;
-          cell.classList.add("outside");
+          cellDay = i - firstDow - daysInMonth + 1;
+          cellMonth = m === 12 ? 1 : m + 1;
+          cellYear = m === 12 ? y + 1 : y;
         } else {
-          cellDay = i - firstDay + 1;
+          isOutside = false;
+          cellDay = i - firstDow + 1;
+          cellMonth = m;
+          cellYear = y;
+        }
+        cells.push({
+          day: cellDay,
+          month: cellMonth,
+          year: cellYear,
+          outside: isOutside,
+          dow: i % 7,
+          date: new Date(cellYear, cellMonth - 1, cellDay)
+        });
+      }
+
+      // Render 6 week rows
+      var body = document.getElementById("gcal-body");
+      body.innerHTML = "";
+
+      for (var w = 0; w < 6; w++) {
+        var weekDiv = document.createElement("div");
+        weekDiv.className = "gcal-week";
+
+        var weekCells = [];
+        for (var c = 0; c < 7; c++) {
+          weekCells.push(cells[w * 7 + c]);
         }
 
-        var dowIdx = i % 7;
-        var numCls = "gcal-cell-num" + (dowIdx === 0 ? " sun" : "") + (dowIdx === 6 ? " sat" : "");
-        cell.innerHTML = '<div class="' + numCls + '">' + cellDay + '</div>';
+        // Count how many bar slots we need for this week
+        var barSlots = [];
+        rangeEvents.forEach(function(re) {
+          var reStart = new Date(getYearForMonth(re.sm), re.sm - 1, re.sd);
+          var reEnd = new Date(getYearForMonth(re.em), re.em - 1, re.ed);
+          var weekStart = weekCells[0].date;
+          var weekEnd = weekCells[6].date;
 
-        // Add events to this cell
-        if (!isOutside) {
-          dayEvents.forEach(function(e) {
-            if (e.month === m && e.day === cellDay) {
-              cell.innerHTML += '<div class="gcal-event ' + e.type + '">' + e.text + '</div>';
+          if (reStart <= weekEnd && reEnd >= weekStart) {
+            var startCol = 0;
+            var endCol = 6;
+            for (var c = 0; c < 7; c++) {
+              if (weekCells[c].date >= reStart) { startCol = c; break; }
             }
-          });
+            for (var c = 6; c >= 0; c--) {
+              if (weekCells[c].date <= reEnd) { endCol = c; break; }
+            }
+            barSlots.push({ startCol: startCol, endCol: endCol, text: re.text, type: re.type });
+          }
+        });
+
+        // Calculate top offset for single-day events (push down for bars)
+        var barAreaHeight = barSlots.length * 20;
+        var dayTopPad = 28 + barAreaHeight;
+
+        // Render 7 day cells
+        for (var c = 0; c < 7; c++) {
+          var cell = weekCells[c];
+          var dayDiv = document.createElement("div");
+          dayDiv.className = "gcal-day" + (cell.outside ? " outside" : "");
+          dayDiv.style.paddingTop = "2px";
+
+          // Date number
+          var numDiv = document.createElement("div");
+          numDiv.className = "gcal-day-num" + (cell.dow === 0 ? " sun" : "") + (cell.dow === 6 ? " sat" : "");
+          numDiv.textContent = cell.day;
+          dayDiv.appendChild(numDiv);
+
+          // Spacer for bar area
+          if (barSlots.length > 0) {
+            var spacer = document.createElement("div");
+            spacer.style.height = barAreaHeight + "px";
+            dayDiv.appendChild(spacer);
+          }
+
+          // Single-day events (only for current month cells)
+          if (!cell.outside) {
+            dayEvents.forEach(function(e) {
+              if (e.month === m && e.day === cell.day) {
+                var chip = document.createElement("div");
+                chip.className = "gcal-chip " + e.type;
+                chip.textContent = e.text;
+                chip.title = e.text;
+                dayDiv.appendChild(chip);
+              }
+            });
+          }
+
+          weekDiv.appendChild(dayDiv);
         }
 
-        grid.appendChild(cell);
+        // Render multi-day bars (absolutely positioned)
+        barSlots.forEach(function(bar, bi) {
+          var barDiv = document.createElement("div");
+          barDiv.className = "gcal-bar " + bar.type;
+          barDiv.textContent = bar.text;
+          barDiv.title = bar.text;
+          // Position: left and width based on column positions
+          var leftPct = (bar.startCol / 7 * 100);
+          var widthPct = ((bar.endCol - bar.startCol + 1) / 7 * 100);
+          barDiv.style.left = leftPct + "%";
+          barDiv.style.width = "calc(" + widthPct + "% - 4px)";
+          barDiv.style.marginLeft = "2px";
+          barDiv.style.top = (28 + bi * 20) + "px";
+          weekDiv.appendChild(barDiv);
+        });
+
+        body.appendChild(weekDiv);
       }
 
       // Events list below
@@ -444,16 +578,23 @@
       var html = '<h3>' + monthNames[m] + 'のイベント</h3>';
       var hasAny = false;
 
+      // Single-day events
       dayEvents.forEach(function(e) {
         if (e.month === m) {
           hasAny = true;
-          html += '<div class="gcal-ev-item"><span class="gcal-ev-date">' + m + '/' + e.day + '</span><span class="gcal-event ' + e.type + '" style="display:inline-block;">' + e.text + '</span></div>';
+          html += '<div class="gcal-ev-item"><span class="gcal-ev-date">' + m + '/' + e.day + '</span><span class="gcal-ev-badge ' + e.type + '">' + e.text + '</span></div>';
         }
       });
-      rangeEvents.forEach(function(e) {
-        if (e.months.indexOf(m) !== -1) {
+      // Range events that overlap this month
+      rangeEvents.forEach(function(re) {
+        var reStartL = toLinear(re.sm, re.sd);
+        var reEndL = toLinear(re.em, re.ed);
+        var mStartL = toLinear(m, 1);
+        var mEndL = toLinear(m, daysInMonth);
+        if (reStartL <= mEndL && reEndL >= mStartL) {
           hasAny = true;
-          html += '<div class="gcal-ev-item"><span class="gcal-ev-date">期間</span><span class="gcal-event ' + e.type + '" style="display:inline-block;">' + e.text + '</span></div>';
+          var label = re.sm + "/" + re.sd + "〜" + re.em + "/" + re.ed;
+          html += '<div class="gcal-ev-item"><span class="gcal-ev-date">' + label + '</span><span class="gcal-ev-badge ' + re.type + '">' + re.text + '</span></div>';
         }
       });
       if (!hasAny) {
