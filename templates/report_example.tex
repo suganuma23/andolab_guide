@@ -1,0 +1,337 @@
+%\documentclass[11pt,a4paper]{jsarticle}
+\documentclass[a4paper,dvipdfmx]{jsarticle}
+%
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{ascmac}
+\usepackage[lined,linesnumbered,boxed]{algorithm2e}
+\usepackage{here}
+\usepackage[subrefformat=parens]{subcaption}
+\usepackage{diagbox}
+\usepackage{comment} 
+\SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
+\SetKwInput{KwIn}{入力}
+\SetKwInput{KwOut}{出力}
+%
+\setlength{\textwidth}{\fullwidth}
+\setlength{\textheight}{40\baselineskip}
+\addtolength{\textheight}{\topskip}
+%\setlength{\voffset}{-0.2in}
+%\setlength{\topmargin}{0pt}
+%\setlength{\headheight}{0pt}
+%\setlength{\headsep}{0pt}
+\DeclareMathOperator{\err}{err}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\lca}{lca}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\BUTT}{BUTT}
+\DeclareMathOperator{\Partitioning}{Partitioning}
+\DeclareMathOperator{\iftext}{if}
+\DeclareMathOperator{\main}{main}
+\DeclareMathOperator{\IR}{IR}
+\DeclareMathOperator{\SIR}{SIR}
+\DeclareMathOperator{\LCAM}{LCA}
+\DeclareMathOperator{\CLCAM}{ConfigLCA}
+\DeclareMathOperator{\CkSS}{Config{\it k}SS}
+\DeclareMathOperator{\MV}{minvalue}
+\DeclareMathOperator{\kSS}{{\it k}SS}
+\DeclareMathOperator{\Init}{Initialize}
+\DeclareMathOperator{\key}{key}
+\DeclareMathOperator{\Insert}{insert}
+\DeclareMathOperator{\deletemin}{deletemin}
+\DeclareMathOperator{\increasekey}{increasekey}
+\DeclareMathOperator{\findmin}{findmin}
+\DeclareMathOperator{\Sort}{Sort}
+\DeclareMathOperator{\add}{add}
+\DeclareMathOperator{\delete}{del}
+\DeclareMathOperator{\NULL}{NULL}
+\DeclareMathOperator{\Incresekey}{Increase{\it key}}
+\DeclareMathOperator{\Changekey}{Change{\it key}}
+
+\SetKwRepeat{Do}{do}{while}
+\SetKwProg{Def}{def}{:}{end}
+%
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{property}[theorem]{性質}
+\newtheorem{remark}[theorem]{注意}
+\newtheorem{example}[theorem]{例}
+\newtheorem{conjecture}[theorem]{予想}
+\newtheorem{exercise}[theorem]{例題}
+\newtheorem{observation}[theorem]{観察}
+\newtheorem{definition}[theorem]{定義}
+\def\proof{\par\noindent{(証明)} \ignorespaces}
+%
+\title{報告書}
+\author{石田　京太郎}
+\date{\today}
+\begin{document}
+\maketitle
+%
+%
+%\vspace{\baselineskip}
+%\vspace{\baselineskip}
+
+\section{MINCC}
+グラフ$G = (X, F)$と各点対の重み$w : X \times X \rightarrow \mathbb R$が与えられたとき, 
+\begin{equation}\label{eq:q_ultram}
+\left|\begin{array}{rl}
+\min & \displaystyle\sum_{\{i, j\} \in F \bigtriangleup \bar F} w(i,j)\\
+\mbox{s.t.} & \bar G = (X, \bar F)はクリークの直和. \\
+\end{array}
+\right.
+\end{equation}
+を{\bf MINCC}と呼ぶ. ここで$\bar G = (X, \bar F)$は$G = (X, F)$を編集したグラフである. そして, 0-1行列$M  : X \times X \rightarrow \{0, 1\}$を
+\begin{align}
+M(i,j)=
+\begin{cases}
+0 &\text{if $\{i, j\} \in F$,}\\
+1 &\text{otherwise}
+\end{cases}
+\end{align}
+と定義すると, MINCCは
+\begin{equation}\label{eq:q_ultram2}
+\left|\begin{array}{rll}
+\min & \displaystyle\sum_{i, j \in X} w(i,j)|D_{(T, l)}(i,j)- M(i,j)| & \\
+\mbox{s.t.} & (T = (V, E), l)はXを葉集合とする超距離木. & \\
+& D_{(T, l)}(i,j) \in \{0,1\} &(i, j \in X) \\
+\end{array}
+\right.
+\end{equation}
+と変形することができる. ここで, $D_{(T, l)}(i, j)$は$(T = (V, E), l)$における$i$-$j$間の距離である. 
+\par 根付き$T = (V, E)$の点への重み付け$h: V \rightarrow \mathbb R$は, 
+\begin{enumerate}
+  \item $h(v) = 0$ \quad $(v \in X)$, 
+  \item $h(j) \leq h(i)$ \quad $((i, j) \in E)$
+\end{enumerate}
+を満たすとき, {\bf 単調}と呼ばれる. 任意の単調な点重み付き根付き木$(T,h)$に対して, 
+\begin{align}
+  D_{(T,h)}(i, j) = h({\rm lca}_T(i, j))\quad (i, j \in X) \label{ten}
+\end{align}
+と定義する. ここで, ${\rm lca}_T(i, j)$は$T$中の$i$と$j$の最小共通祖先である. 式(\ref{ten})より, 問題(\ref{eq:q_ultram2})は以下の問題と等価である. 
+\begin{equation}\label{eq:q_ultram3}
+\left|\begin{array}{rll}
+\min & \displaystyle\sum_{i, j \in V} w(i,j)|D_{(T, h)}(i,j)- M(i,j)| & \\
+\mbox{s.t.} &(T = (V, E),h)は葉集合がXであるような単調な点重み付き根付き木. & \\
+& h(v) \in \{0,1\} &(v \in V) \\
+\end{array}
+\right.
+\end{equation}
+問題(\ref{eq:q_ultram3})の目的関数は以下のように書き換えることができる. 
+\begin{align*}
+  \sum_{i, j \in V} w(i,j)|D_{(T, h)}(i,j)- M(i,j)| &=  \sum_{i, j \in V} w(i,j)|h({\rm lca}_T(i, j)) - M(i,j)| \\
+&=  \sum_{v \in V} \sum_{\substack{i,j \in V \\ v = {\rm lca}_T(i, j)}} w(i,j)|h(v) - M(i,j)| \\
+&=  \sum_{v \in V} \sum_{(i,j) \in d_T(v)} w(i,j)|h(v) - M(i,j)| %\\
+%&=  \sum_{v \in V} \sum_{\substack{(i,j) \in d_T(v) \\ h(v) \neq M(i,j)}} w(i,j) . 
+\end{align*}
+ここで, $d_T(v) = \{(i, j) \mid v=\text{lca}_T(i, j), i, j \in V\}$である. 問題(\ref{eq:q_ultram3})は以下のように変形することができる. 
+\begin{equation}\label{eq:q_ultram4}
+\left|\begin{array}{lll}
+\min & \displaystyle \sum_{v \in V} \sum_{(i,j) \in d_T(v)} w(i,j)|h(v) - M(i,j)|& \\
+\mbox{s.t.} &(T = (V, E), h)は葉集合がXであるような単調な点重み付き根付き木. & \\
+& h(v) \in \{0,1\} &(v \in V) \\
+\end{array}
+\right.
+\end{equation}
+
+\section{$\{0, 1\}$値$\ell_1$-単調回帰問題}
+局所探索アルゴリズムの各反復では, $T$を固定した問題(\ref{eq:q_ultram4})を解く必要がある. この問題は根付き木上の{\bf$\{0, 1\}$値$\ell_1$-単調回帰問題}として以下のように定式化することができる.  
+\begin{equation}\label{eq:q_ultram5}
+\left|\begin{array}{lll}
+\min & \displaystyle \sum_{v \in V} \sum_{(i,j) \in d_T(v)} w(i,j)|h(v) - M(i,j)|& \\
+\mbox{s.t.} &hはTに対する単調な点重み付け. & \\
+& h(v) \in \{0,1\} &(v \in V) \\
+\end{array}
+\right.
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{comment} %分かりづらくなる
+$h(v) \in \{0,1\}$ $(v \in V)$, $M(i,j) \in \{0, 1\}$ $(i, j \in V)$より, 問題(\ref{eq:q_ultram5})の目的関数は, 
+\begin{align*}
+\sum_{v \in V} \sum_{(i,j) \in d_T(v)} w(i,j)|h(v) - M(i,j)| &=  \sum_{v \in V} \sum_{\substack{(i,j) \in d_T(v) \\ h(v) \neq M(i,j)}} w(i,j) . 
+\end{align*}
+と変形することができる. 
+よって, 問題(\ref{eq:q_ultram5})は以下のように書き換えることができる. 
+\begin{equation}\label{eq:q_ultram6}
+\left|\begin{array}{lll}
+\min & \displaystyle \sum_{v \in V} \sum_{\substack{(i,j) \in d_T(v) \\ h(v) \neq M(i,j)}} w(i,j)& \\
+\mbox{s.t.} &hはTに対する単調な点重み付け. & \\
+& h(v) \in \{0,1\} &(v \in V) \\
+\end{array}
+\right.
+\end{equation}
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+アルゴリズム~\ref{L1IR}は根付き木上の$\{0, 1\}$値$l_1$単調回帰問題に対するアルゴリズムである. ここで, アルゴリズム~\ref{L1IR}に出てくる$C(v)$, $p(v)$は, $v \in V$に対して
+\begin{align*}
+C(v) &= \{u : u \in V, uはvの子供\},  \\
+p(v) &はvの親
+\end{align*}
+である. また, アルゴリズム\ref{L1IR}の2-3行目について, 
+\begin{align}
+Z(v,0) &= \err(v,0) + \sum_{u \in C(v)} Z(u,0),  \label{z0} \\
+Z(v,1) &= \err(v,1) + \sum_{u \in C(v)}\min\{Z(u,0),Z(u,1)\} \label{z1}
+\end{align}
+は再帰的に定義される. $Z(v,0)$は$h(v) = 0$としたときの$v$を根とする部分木に対する部分問題の最適値であり, $Z(v,1)$は$h(v) = 1$としたときの$v$を根とする部分木に対する部分問題の最適値である. ここで, $\err$は
+\begin{align}
+\err (v, 0) &= \sum_{(i,j) \in d_T(v)} w(i,j)|0-M(i,j)| \notag \\
+&= \sum_{\substack{(i,j) \in d_T(v) \\ M(i,j) = 1}} w(i,j), \\
+\err (v, 1)  &= \sum_{(i,j) \in d_T(v)} w(i,j)|1-M(i,j)|\notag \\
+&= \sum_{\substack{(i,j) \in d_T(v) \\ M(i,j) = 0}} w(i,j) 
+\end{align}
+と定義される. 
+%%%%%%%%%%%%%%%{0,1}値l1単調回帰問題に対するアルゴリズム%%%%%%%%%%%%%%%%%%%
+\DecMargin{0.5em}
+\IncMargin{1.0em}
+\begin{algorithm}[h]
+\caption{根付き木上の${\{0, 1\}}$値$l_1$単調回帰問題に対するアルゴリズム. }
+\label{L1IR}
+\KwIn {根付き木$T = (V, E)$, 0-1行列$M$, 辺重み$w$, $d_T$.} 
+\KwOut {$T$上の${\{0, 1\}}$値$l_1$単調回帰問題の極小最適解$h$.}
+	\For{$v \in V$を$T$において後行順で}{
+		$Z(v,0) \leftarrow \err(v,0) + \sum_{u \in C(v)} Z(u, 0)$\;
+    		$Z(v,1) \leftarrow \err(v,1) + \sum_{u \in C(v)}\min\{Z(u, 0),Z(u, 1)\}$\;
+   	 }
+   	\For{$v \in V$を$T$において先行順で}{
+        		\lIf{$Z(v,0) \leq Z(v, 1)$または$h(p(v)) = 0$}{
+			$h(v) \leftarrow 0$
+		}\lElse{
+			$h(v) \leftarrow 1$
+		}
+	}
+\end{algorithm}
+
+\begin{example}アルゴリズム\ref{L1IR}の動作の例を示す. 入力の根付き木を図\ref{tree}とし, 0-1行列$M$を
+\begin{equation}
+	M =
+	\begin{pmatrix}
+	0 & 0 & 0 & 1 & 1\\ 
+	0 & 0 & 1 & 0 & 1\\ 
+	0 & 1 & 0 & 0 & 1\\ 
+	1 & 0 & 0 & 0 & 1\\ 
+	1 & 1 & 1 & 1 & 0\\ 
+	\end{pmatrix}
+, 
+\end{equation}
+辺重み$w$を
+\begin{equation}
+	w =
+	\begin{pmatrix}
+	0 & 2 & 1 & 3 & 4\\ 
+	2 & 0 & 5 & 6 & 1\\ 
+	1 & 5 & 0 & 3 & 2\\ 
+	3 & 6 & 3 & 0 & 4\\ 
+	4 & 1 & 2 & 4 & 0\\ 
+	\end{pmatrix}
+\end{equation}
+とする. そして, 入力の根付き木から得られる$d_T$は以下のとおりである. 
+\par [$v = 1, 2, 3, 4, 5$のとき] $d_T(v) = \{(v,v)\} $. 
+\par [$v = 6$のとき] $ d_T(6) = \{(4,5)\} $. 
+\par [$v = 7$のとき] $ d_T(7) = \{(1,3)\} $.  
+\par [$v = 8$のとき] $ d_T(8) = \{(2,4),(2,5)\} $.  
+\par [$v = 9$のとき] $ d_T(9) = \{(1,2),(1,4),(1,5),(2,3),(3,4),(3,5)\} $.  
+\begin{figure}[h]
+\center
+\includegraphics[width=7cm]{figs/example09171.png}
+\caption{入力の根付き木$T = (V, E)$.}
+\label{tree}
+\end{figure}
+\par アルゴリズム\ref{L1IR}の2-3行目, $\err(v,0),\err(v,1)$の計算について, 例として$\err(9,0)$と$\err(9,1)$の計算される様子を以下に示し, 全ての点に対する$\err$の計算結果を図\ref{tree2}に示す. 
+\begin{align*}
+\err (9, 0) &= \sum_{v \in V} \sum_{\substack{(i,j) \in d_T(v) \\ h(v) \neq 0}} w(i,j) \\
+&= w(1,4) + w(1,5) + w(2,3) + w(3,5) \\
+&= 14,  \\
+\err (9, 1) &= \sum_{v \in V} \sum_{\substack{(i,j) \in d_T(v) \\ h(v) \neq 1}} w(i,j) \\
+&= w(1,2) + w(3,4)\\
+&= 5. 
+\end{align*}
+\begin{figure}[h]
+\center
+\includegraphics[width=7cm]{figs/example09172.png}
+\caption{各点$v$に置ける$\err$の計算結果$\{\err(v,0), \err(v,1)\}$. }
+\label{tree2}
+\end{figure}
+\par 次にアルゴリズム\ref{L1IR}の2-3行目で$Z$が計算される様子を以下に示す. 
+\par [$v = 1,2,3,4,5$のとき] $Z(v, 0)$と$Z(v, 1)$は
+\begin{align*}
+Z(v, 0) &= \err(v,0) + \sum_{u \in C(v)} Z(u,0) = 0, \\
+Z(v, 1) &= \err(v,1) + \sum_{u \in C(v)}\min\{Z(u,0),Z(u,1)\} = 0
+\end{align*}
+と計算される. 
+\par [$v = 6$のとき] $Z(6, 0)$と$Z(6, 1)$は
+\begin{align*}
+Z(6, 0) &= \err(6,0) + \sum_{u \in C(v)} Z(u,0) \\
+&= 4 + 0 + 0 = 4, \\
+Z(6, 1) &= \err(6,1) + \sum_{u \in C(v)}\min\{Z(u,0),Z(u,1)\} \\
+&= 0 + 0 + 0 = 0. \\
+\end{align*}
+と計算される. 
+\par [$v = 8$のとき] $Z(6, 0)$と$Z(6, 1)$は
+\begin{align*}
+Z(8, 0) &= \err(8,0) + \sum_{u \in C(v)} Z(u,0) \\
+&= 1 + 4 + 0 = 5, \\
+Z(8, 1) &= \err(8,1) + \sum_{u \in C(v)}\min\{Z(u,0),Z(u,1)\} \\
+&= 6 + 0 + 0 = 6. \\
+\end{align*}
+と計算される. 
+以下同様に$v = 7,  9$について計算した結果を図\ref{tree3}に示す. 
+\begin{figure}[h]
+\center
+\includegraphics[width=7cm]{figs/example09173.png}
+\caption{各点$v$に置ける$Z$の計算結果$\{Z(v,0), Z(v,1)\}$. }
+\label{tree3}
+\end{figure}
+\par アルゴリズム\ref{L1IR}の5-8行目において, $T$上の${\{0, 1\}}$値$l_1$単調回帰問題の極小最適解$h$は, 先行順に
+\begin{align*}
+Z(v,0) \leq Z(v,1) &\Rightarrow h(v) = 0, \\
+Z(v,0) > Z(v,1) &\Rightarrow h(v) = 1
+\end{align*}
+と決定される. しかし, 点6において$Z(v, 0) > Z(v,1)$であるが, 親である点8に対して$h(8) = 0$であるため, $h(6) = 0$となる. 最終的に出力された$h$を以下の表に示す. 
+\begin{table}[H]
+\caption{ $T$上の${\{0, 1\}}$値$l_1$単調回帰問題の極小最適解$h$. }
+\label{ex-multi-tildez}
+\begin{tabular}{l|lllllllll}
+%\cline{2-10}
+                           $v$  & $1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & $9$ \\ \hline
+\multicolumn{1}{l|}{$h(v)$} & $0$ & $0$  & $0$  & $0$  & $0$  & $0$  & $0$  & $0$ & $1$ \\ %\hline
+\end{tabular}
+\centering
+\end{table}
+\end{example}
+
+%\begin{comment}
+\section{局所探索アルゴリズム}
+アルゴリズム\ref{kSS}は, 問題(\ref{eq:q_ultram4})に対する局所探索アルゴリズムである. ここで関数$f(T,h)$を解が$(T,h)$のときの問題(\ref{eq:q_ultram4})の目的関数値とし, ${\cal N}_k(T)$を$T$の$k$SS近傍とする. アルゴリズム\ref{L1IR}は$d_T$と$\err$の計算をあらかじめ行っておくことでO($n$)で実行可能である. 次に6行目の$d_{T'}$と$\err$の計算については, 水越修論{\bf 補題} 3.13 総和行列の計算時間の証明の部分より, O($k$)で実行できそうであることが分かった. よって, 局所探索アルゴリズム1反復当たりの計算時間はO$(n \times k{\rm SS近傍の大きさ})$になりそうである. 
+\begin{algorithm}[h]
+\caption{局所探索アルゴリズム. }
+\label{kSS}
+\KwIn {根付き木$T = (V,E)$, 0-1行列$M$, 辺重み$w$. }
+\KwOut {$l_1$最良近似超距離木問題の局所最適解となる根付き木$T = (V, E)$.}
+$d_T$と$\err$の計算\;
+$T$上の$\{0,1\}$値$\ell_1$単調回帰問題の極小最適解$h$を求める\;
+$\MV \leftarrow f(T, h)$\;
+\Repeat{$\MV$が更新されなくなる}{
+	\For{$T' \in {\cal N}_k(T)$}{
+		$d_{T'}$と$\err$の計算\;
+		$T'$上の$\{0,1\}$値$\ell_1$単調回帰問題の極小最適解$h'$を求める\;
+		\If{$f(T', h') < \MV$}{
+			$\MV \leftarrow f(T', h')$\;
+			$T \leftarrow T'$\;
+		}
+	}
+}
+\end{algorithm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{次回の目標}
+\begin{itemize}
+	\item 局所探索アルゴリズムの開発. 
+\end{itemize}
+%\end{comment}
+
+\end{document}
