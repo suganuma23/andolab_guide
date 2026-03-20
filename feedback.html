@@ -32,11 +32,19 @@
 
     <section>
       <h2>このサイトを編集したい場合</h2>
-      <p>このサイトはGitHubで管理されています。内容の追加・修正をしたい場合は、リポジトリをクローンしてプルリクエストを送ってください。</p>
-      <pre><code>git clone https://github.com/suganuma23/andolab_guide.git</code></pre>
-      <p>リポジトリURL: <a href="https://github.com/suganuma23/andolab_guide" target="_blank">https://github.com/suganuma23/andolab_guide</a></p>
+      <p>このサイトはGitHubで管理されています。内容の追加・修正をしたい場合は、以下の手順でプルリクエストを送ってください。</p>
+      <ol>
+        <li>リポジトリURL: <a href="https://github.com/suganuma23/andolab_guide" target="_blank">https://github.com/suganuma23/andolab_guide</a></li>
+        <li>GitHubでリポジトリを<strong>フォーク</strong>する</li>
+        <li>フォークしたリポジトリをクローンする
+          <pre><code>git clone https://github.com/自分のユーザー名/andolab_guide.git</code></pre>
+        </li>
+        <li>変更を加えてコミット・プッシュする</li>
+        <li><strong>プルリクエスト</strong>を送る</li>
+        <li>管理者がレビューしてマージします</li>
+      </ol>
       <div class="note">
-        <p>mainブランチへの直接プッシュはできません。変更は新しいブランチを作成してプルリクエストで提出してください。</p>
+        <p>mainブランチへの直接プッシュはできません。必ずフォーク→プルリクエストの流れで変更を提出してください。</p>
       </div>
     </section>
   </div>
