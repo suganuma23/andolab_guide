@@ -1,6 +1,6 @@
 # 安藤研 TeXフォーマットルール
 
-このファイルをCLAUDE.mdに記載しておくと、AIがTeXの修正時にこのルールに従ってくれます。
+このファイルをCLAUDE.mdに記載しておくと、AIがTeXの修正時にこのルールに従ってくれます。いい加減な場合があるため、各自編集しよう。
 
 ---
 
@@ -11,14 +11,14 @@
   - OK: `系統樹を推定することは, 重要な課題である.`
   - NG: `系統樹を推定することは,重要な課題である.`
 - 文末ピリオドの前にスペースは入れない
+- 数式で終わる場合でもそこで文が終わるならば「.」をつける.
+  -  `f(x)`は次のように表される`\[ f(x) = x^2 + 1. \]`
 - キャプション末尾には必ずピリオド「.」をつける
   - `\caption{グラフ $G$ の構造.}`
 
 ## スペーシング
 
 - **半角と半角の間には半角スペース**を入れる
-  - OK: `$k$SS操作 (Subtree Swap Operation)`
-  - NG: `$k$SS操作(Subtree Swap Operation)`
 - 括弧の外側にも半角スペースを入れる
 - 引用 `\cite{}` の前には `~`（改行禁止スペース）を使う
   - OK: `Ailon et al.~\cite{AC11}は`
@@ -29,26 +29,7 @@
 
 - オーダー記法は `\mathrm{O}` を使う: `$\mathrm{O}(n \log n)$`
 - ローマン体にすべき関数名は `\mathrm{}` で囲む
-- ノルムは `\|\cdot\|` で書く: `$\|D_{(T,h)} - M\|_2$`
-- 条件付き最適化の制約は `\mathrm{s.t.}` を使う
-- テキスト中の条件は `\text{}` を使う: `\text{if } p < \infty`
-- 実数集合は `\mathbb{R}` を使う
 
-## 図・表・アルゴリズム
-
-- 画像形式は **EPS** を使う（tgif / gnuplot で生成）
-- 画像挿入は `\usepackage[dvipdfmx]{graphicx}`
-- tgif図は `tgifs/` フォルダ、gnuplot図は `gnuplots/` フォルダに置く
-- 図の位置指定は `[H]`（here パッケージ）または `[htbp]`
-- サブキャプションは `subcaption` パッケージ + `minipage` で並べる
-- 表の罫線は `booktabs` の `\toprule`, `\midrule`, `\bottomrule` を使う
-- アルゴリズムは `\usepackage[lined,linesnumbered,boxed]{algorithm2e}`
-- アルゴリズム名は日本語化する:
-  ```
-  \SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
-  \SetKwInput{KwIn}{入力}
-  \SetKwInput{KwOut}{出力}
-  ```
 
 ## 参照・引用
 
@@ -128,13 +109,3 @@ ptex2pdf -l ファイル名.tex
 ```
 
 参照がある場合は2回実行する。
-
-## 文書ごとの設定
-
-| | 報告書 | アブストラクト | 卒論 | ゼミ本体 |
-|---|---|---|---|---|
-| クラス | `jsarticle` | `jarticle` | `jreport` | `jarticle` |
-| スタイル | なし | `chukan.sty` | `systhesisu.sty` | なし |
-| 構造 | `\section` | `\section` | `\chapter` | `\section` |
-| 段組 | 1段 | 2段 | 1段 | 1段 |
-| フォントサイズ | 指定なし | 9pt | 11pt | 11pt |
