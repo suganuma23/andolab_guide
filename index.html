@@ -69,9 +69,9 @@
       <a href="duties.html" class="card">
         <div class="card-icon">🧹</div>
         <h2>研究室の仕事</h2>
-        <p>ごみ捨て・当番・日常ルール</p>
+        <p>ごみ捨て・掃除・補充 </p>
       </a>
-      <a href="sensei.html" class="card" id="card-sensei" style="display:none">
+      <a href="gd91.html" class="card" id="card-sensei" style="display:none">
         <div class="card-icon">👨‍🏫</div>
         <h2>安藤先生の性格</h2>
         <p>先生との付き合い方・心得・想定chatbot</p>
@@ -104,10 +104,37 @@
   </footer>
 
   <script>
+    const pages = [
+      { url: 'schedule.html', keywords: ['スケジュール','年間','イベント','飲み会','bbq','発表会','行事'] },
+      { url: 'seminar.html',  keywords: ['ゼミ','セミナー','発表','輪読','プレゼン'] },
+      { url: 'exam.html',     keywords: ['院試','大学院','入試','試験'] },
+      { url: 'thesis.html',   keywords: ['卒論','卒業研究','報告書','中間発表','最終発表'] },
+      { url: 'tools.html',    keywords: ['ツール','git','ssh','tmux','tgif','gnuplot','環境'] },
+      { url: 'equipment.html',keywords: ['設備','pc','パソコン','印刷','プリンター','ネットワーク','wifi'] },
+      { url: 'duties.html',   keywords: ['仕事','当番','ごみ','掃除','補充','役割'] },
+      { url: 'papers.html',   keywords: ['論文','ペーパー','文献','研究','検索','データベース'] },
+      { url: 'methods.html',  keywords: ['手法','回帰','最適化','アルゴリズム','数学','統計'] },
+      { url: 'tex.html',      keywords: ['tex','latex','レポート','フォーマット','数式'] },
+      { url: 'feedback.html', keywords: ['意見','質問','フィードバック','github','匿名'] },
+    ];
+
     const inp = document.getElementById('secret-input');
     inp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && inp.value.trim().toUpperCase() === 'AK') {
-        window.location.href = 'sensei.html';
+      if (e.key !== 'Enter') return;
+      const val = inp.value.trim();
+      if (!val) return;
+      if (val.toUpperCase() === 'AKPS') {
+        window.location.href = 'gd91.html';
+        return;
+      }
+      const q = val.toLowerCase();
+      const hit = pages.find(p => p.keywords.some(k => k.includes(q) || q.includes(k)));
+      if (hit) {
+        window.location.href = hit.url;
+      } else {
+        inp.placeholder = '見つかりません';
+        inp.value = '';
+        setTimeout(() => inp.placeholder = 'キーワードを入力...', 2000);
       }
     });
     inp.addEventListener('focus', () => inp.style.background = 'rgba(255,255,255,0.25)');
