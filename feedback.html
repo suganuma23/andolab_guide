@@ -19,16 +19,16 @@
     <section>
       <h2>質問・意見を送る</h2>
       <p>研究室に関する質問や改善提案があれば、ここから送ってください。匿名で送れます。</p>
-      <form class="feedback-form" onsubmit="submitFeedback(event)">
-        <textarea id="feedback-text" placeholder="ここに質問や意見を入力してください..."></textarea>
-        <button type="submit">送信</button>
-      </form>
-      <div id="feedback-result" style="margin-top: 1rem;"></div>
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLScMFDC1Q3WQMEMTSs88UvjImdTi-tQxabXPk2VvIPNcVEaQhQ/viewform?embedded=true"
+        width="100%"
+        height="600"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        style="border-radius: 8px;"
+      >読み込んでいます…</iframe>
     </section>
-
-    <div class="note">
-      <p>※ 送信機能を有効にするには、バックエンド（Google Formsなど）の設定が必要です。現在はデモ表示です。</p>
-    </div>
 
     <section>
       <h2>このサイトを編集したい場合</h2>
@@ -50,15 +50,5 @@
   </div>
   <footer><p>安藤研究室 新人ガイド</p></footer>
 
-  <script>
-    function submitFeedback(e) {
-      e.preventDefault();
-      var text = document.getElementById('feedback-text').value.trim();
-      if (!text) return;
-      document.getElementById('feedback-result').innerHTML =
-        '<div class="note"><p>送信されました（デモ）。実際に動かすにはGoogle Formsなどとの連携が必要です。</p></div>';
-      document.getElementById('feedback-text').value = '';
-    }
-  </script>
 </body>
 </html>
