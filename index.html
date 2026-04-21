@@ -12,6 +12,25 @@
     <div class="header-inner">
       <h1>安藤研究室</h1>
       <p class="subtitle">工学部 数理システム — 新人ガイド（2026年度版）</p>
+      <form id="secret-search" onsubmit="return false;" style="margin-top:1.2rem;">
+        <input
+          type="text"
+          id="secret-input"
+          placeholder="キーワードを入力..."
+          autocomplete="off"
+          style="
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 0.9rem;
+            width: 220px;
+            outline: none;
+            letter-spacing: 0.04em;
+          "
+        >
+      </form>
     </div>
   </header>
 
@@ -52,7 +71,7 @@
         <h2>研究室の仕事</h2>
         <p>ごみ捨て・当番・日常ルール</p>
       </a>
-      <a href="sensei.html" class="card">
+      <a href="sensei.html" class="card" id="card-sensei" style="display:none">
         <div class="card-icon">👨‍🏫</div>
         <h2>安藤先生の性格</h2>
         <p>先生との付き合い方・心得・想定chatbot</p>
@@ -83,6 +102,17 @@
   <footer>
     <p>安藤研究室 新人ガイド</p>
   </footer>
+
+  <script>
+    const inp = document.getElementById('secret-input');
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && inp.value.trim().toUpperCase() === 'AK') {
+        window.location.href = 'sensei.html';
+      }
+    });
+    inp.addEventListener('focus', () => inp.style.background = 'rgba(255,255,255,0.25)');
+    inp.addEventListener('blur',  () => inp.style.background = 'rgba(255,255,255,0.15)');
+  </script>
 
 </body>
 </html>
