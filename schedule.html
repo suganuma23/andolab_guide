@@ -415,16 +415,26 @@
           { date:"2月12日", text:"修論・卒研打ち上げ" },
         ],
       },
-      // ===== 2026年度を追加する場合はここにコピーして日程を書き換える =====
-      // "2026": {
-      //   label: "2026年度",
-      //   baseYear: 2026,
-      //   dayEvents: [ ... ],
-      //   rangeEvents: [ ... ],
-      //   yearEvents: [ ... ],
-      //   listEvents: [ ... ],
-      //   socialEvents: [ ... ],  // 親睦イベント（飲み会・BBQなど）
-      // },
+      "2026": {
+        label: "2026年度",
+        baseYear: 2026,
+        dayEvents: [
+          { month:4, day:21, text:"初顔合わせ", type:"academic" },
+          { month:4, day:27, text:"新入生歓迎飲み会", type:"party" },
+        ],
+        rangeEvents: [],
+        yearEvents: [
+          { month:4, text:"4/21 初顔合わせ", type:"academic" },
+          { month:4, text:"4/27 新入生歓迎飲み会", type:"party" },
+        ],
+        listEvents: [
+          { date:"4月21日", text:"初顔合わせ" },
+          { date:"4月27日", text:"新入生歓迎飲み会" },
+        ],
+        socialEvents: [
+          { date:"4月27日", text:"新入生歓迎飲み会" },
+        ],
+      },
     };
 
     // 現在選択中の年度データ
