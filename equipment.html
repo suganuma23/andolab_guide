@@ -5,6 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>研究室の設備 — 安藤研究室</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 0.65rem 1.3rem;
+      border: none;
+      background: #e8eaf0;
+      color: #555;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+      bottom: -2px;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn:hover { background: #d0d4e0; color: #1a1a2e; }
+    .tab-btn.active { background: #fff; color: #0f3460; border-bottom: 2px solid #0f3460; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    @media (max-width: 600px) {
+      .tab-btn { padding: 0.5rem 0.8rem; font-size: 0.82rem; }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -16,55 +47,90 @@
   <div class="subpage">
     <a href="index.html" class="back-link">&larr; ホームに戻る</a>
 
-    <section>
-      <h2>設備一覧</h2>
-      <p>研究室・輪講室にある設備をまとめました。何がどこにあるか把握しておきましょう。</p>
-
-      <h3>ホワイトボードとマジックと消すやつ</h3>
-      <p>研究室に一つ、輪講室にひとつあります。マジックやイレーサーは定期的に生協で購入して補充しています。インクが出なくなったマジックを見つけたら、そっと成仏させてあげてください。</p>
-
-      <h3>プロジェクターセット</h3>
-      <p>輪講室に設置されています。プロジェクター本体と投影スクリーンのセットです。発表練習やゼミで使います。</p>
-
-      <h3>プリンター</h3>
-      <p>研究室に設置されています。インクや用紙は定期的に生協で補充しています。</p>
-      <div class="note">
-        <p>補充方法の詳細は追記予定です。インク切れ・紙切れに気づいたら先輩に声をかけてください。</p>
-      </div>
-
-      <h3>歴代の先輩方の卒論・修論</h3>
-      <p>棚に置いてあります。先輩たちの知恵と苦労の結晶です。参考にしましょう。（そろそろ棚の限界が近い？w）</p>
-
-      <h3>PC・キーボードの墓場</h3>
-      <p>なぜか置いてあります。歴代のPCやキーボードが静かに眠っています。触らぬ神に祟りなし。</p>
-
-      <h3>謎の寝床</h3>
-      <p>疲れた時に寝そべりましょう。研究に疲れた体を癒やす聖域です。使ったら元に戻しておきましょう。</p>
-
-      <h3>謎のカードゲーム</h3>
-      <p>暇なときに遊びましょう。息抜きは大事です。ただしゼミ中に遊んではいけません（当たり前）。</p>
-
-      <h3>冷蔵庫・電子レンジ</h3>
-      <p>共用です。冷蔵庫に入れたものには名前を書いておきましょう。放置された食べ物は定期的に処分されます。</p>
-
-      <h3>電子ポット</h3>
-      <p>お湯が必要なときに使えます。水がなくなったら補充しておきましょう。</p>
-
-      <h3>小道具置き場</h3>
-      <p>文房具やちょっとした道具が置いてあります。使ったら戻しましょう。</p>
-
-      <h3>ごみ袋・ゴミ箱</h3>
-      <p>ゴミの分別はしっかりやりましょう。ごみ袋の補充については「研究室の仕事」ページも参照してください。</p>
-
-      <h3>電気のスイッチ</h3>
-      <p>研究室の電気スイッチは古いタイプのボタン式です。場所がわからなければ先輩に聞いてください。最後に帰る人は消灯をお願いします。</p>
-    </section>
-
-    <div class="note">
-      <h4>ツール・ソフトウェアについて</h4>
-      <p>SSH / VPN / VSCode / tmux / Git 等の開発ツールの説明は <a href="tools.html">ツールガイド</a> を参照してください。</p>
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="list">設備一覧</button>
+      <button class="tab-btn" data-tab="printer">プリンター</button>
+      <button class="tab-btn" data-tab="network">ネットワーク</button>
     </div>
-  </div>
+
+    <!-- ===== 設備一覧 ===== -->
+    <div class="tab-content active" id="tab-list">
+      <section>
+        <h2>設備一覧</h2>
+        <p>研究室・輪講室にある設備をまとめました。何がどこにあるか把握しておきましょう。</p>
+
+        <h3>ホワイトボード</h3>
+        <p>研究室に一つ、輪講室にひとつあります。マジックやイレーサーは定期的に生協で購入して補充しています。インクが出なくなったマジックを見つけたら、そっと成仏させてあげてください。</p>
+
+        <h3>プロジェクターセット</h3>
+        <p>輪講室に設置されています。プロジェクター本体と投影スクリーンのセットです。発表練習やゼミで使います。</p>
+
+        <h3>プリンター</h3>
+        <p>研究室に設置されています。インクや用紙は定期的に生協で補充しています。詳細は「プリンター」タブを参照してください。</p>
+
+        <h3>歴代の先輩方の卒論・修論</h3>
+        <p>棚に置いてあります。先輩たちの知恵と苦労の結晶です。参考にしましょう。</p>
+
+        <h3>PC・キーボードの墓場</h3>
+        <p>なぜか置いてあります。歴代のPCやキーボードが静かに眠っています。触らぬ神に祟りなし。</p>
+
+        <h3>謎の寝床</h3>
+        <p>疲れた時に寝そべりましょう。研究に疲れた体を癒やす聖域です。使ったら元に戻しておきましょう。</p>
+
+        <h3>謎のカードゲーム</h3>
+        <p>暇なときに遊びましょう。息抜きは大事です。ただしゼミ中に遊んではいけません（当たり前）。</p>
+
+        <h3>冷蔵庫・電子レンジ</h3>
+        <p>共用です。冷蔵庫に入れたものには名前を書いておきましょう。放置された食べ物は定期的に処分されます。</p>
+
+        <h3>電子ポット</h3>
+        <p>お湯が必要なときに使えます。水がなくなったら補充しておきましょう。</p>
+
+        <h3>小道具置き場</h3>
+        <p>文房具やちょっとした道具が置いてあります。使ったら戻しましょう。</p>
+
+        <h3>ごみ袋・ゴミ箱</h3>
+        <p>ゴミの分別はしっかりやりましょう。ごみ袋の補充については「研究室の仕事」ページも参照してください。</p>
+
+        <h3>電気のスイッチ</h3>
+        <p>研究室の電気スイッチは古いタイプのボタン式です。場所がわからなければ先輩に聞いてください。最後に帰る人は消灯をお願いします。</p>
+      </section>
+
+      <div class="note">
+        <h4>ツール・ソフトウェアについて</h4>
+        <p>SSH / VPN / VSCode / tmux / Git 等の開発ツールの説明は <a href="tools.html">ツールガイド</a> を参照してください。</p>
+      </div>
+    </div><!-- /tab-list -->
+
+    <!-- ===== プリンター ===== -->
+    <div class="tab-content" id="tab-printer">
+      <section>
+        <h2>プリンター</h2>
+        <p>後で書く</p>
+      </section>
+    </div><!-- /tab-printer -->
+
+    <!-- ===== ネットワーク ===== -->
+    <div class="tab-content" id="tab-network">
+      <section>
+        <h2>ネットワーク</h2>
+        <p>後で書く</p>
+      </section>
+    </div><!-- /tab-network -->
+
+  </div><!-- /subpage -->
   <footer><p>安藤研究室 新人ガイド</p></footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-bar').offsetTop - 20, behavior: 'smooth' });
+      });
+    });
+  </script>
 </body>
 </html>
