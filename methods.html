@@ -173,64 +173,6 @@ def linear_regression(xs, ys):
         </div>
       </section>
 
-      <section>
-        <h3>Pythonでの実装ポイント</h3>
-
-        <h4>データの読み込み（csv モジュール）</h4>
-        <pre><code>import csv
-
-def load_csv(filename):
-    rows = []
-    with open(filename, newline="") as f:
-        reader = csv.DictReader(f, skipinitialspace=True)
-        for row in reader:
-            rows.append({
-                "k": int(row["k"]),
-                "n": int(row["n"]),
-                "time_av": float(row["time_av"]),
-            })
-    return rows</code></pre>
-
-        <h4>グループ化と平均の計算（collections.defaultdict）</h4>
-        <pre><code>from collections import defaultdict
-
-mapping = defaultdict(list)
-for r in data:
-    mapping[(r["k"], r["n"])].append(r["time_av"])
-
-# 各グループの平均
-for (k, n), vals in mapping.items():
-    avg = sum(vals) / len(vals)</code></pre>
-
-        <h4>対数変換と回帰</h4>
-        <pre><code>import math
-
-log_n = [math.log(n) for n in N_VALUES]      # X軸
-log_t = [math.log(avg) for avg in averages]   # Y軸
-
-a, b, r2 = linear_regression(log_n, log_t)
-# → time_av ≈ e^b * n^a</code></pre>
-
-        <div class="note">
-          <p>Python標準ライブラリだけで実装できます。numpy や scipy は不要です。</p>
-        </div>
-      </section>
-
-      <section>
-        <h3>結果のグラフ化: make_graph.py</h3>
-        <p>回帰分析と合わせて、実験結果をグラフで可視化することも重要です。<code>experiments/make_graph.py</code> では matplotlib を使って time vs func_value のグラフを描画しています。</p>
-        <pre><code>import matplotlib.pyplot as plt
-
-# 散布図 + 折れ線
-ax.plot(times, func_values, marker="o", label=f"l={l}")
-ax.set_xlabel("time (s)")
-ax.set_ylabel("func_value")
-ax.legend()
-ax.grid(True)
-fig.savefig("graph.png", dpi=150)</code></pre>
-        <p>gnuplot でも同様のグラフを描けますが、Python で実験スクリプトと一体化させる方が管理しやすいこともあります。用途に応じて使い分けましょう。</p>
-      </section>
-
     </div><!-- /tab-regression -->
 
   </div><!-- /subpage -->
