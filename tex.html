@@ -152,17 +152,6 @@ dvipdfmx report.dvi</code></pre>
           </tbody>
         </table>
 
-        <div class="step-box">
-          <h4>latexmk の設定（便利）</h4>
-          <p><code>~/.latexmkrc</code> に以下を書いておくと、<code>latexmk file.tex</code> だけでplatex + dvipdfmx が走ります。</p>
-          <pre><code># ~/.latexmkrc
-$latex = 'platex -interaction=nonstopmode -halt-on-error %O %S';
-$dvipdf = 'dvipdfmx %O -o %D %S';
-$pdf_mode = 3;  # platex + dvipdfmx</code></pre>
-          <p>さらに <code>-pvc</code> オプションでファイル変更を監視し、保存するたびに自動コンパイルもできます:</p>
-          <pre><code>latexmk -pvc file.tex</code></pre>
-        </div>
-
       </section>
 
       <section>
