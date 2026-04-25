@@ -217,49 +217,6 @@ C. Semple and M. Steel: \textit{Phylogenetics}
       </section>
 
       <section>
-        <h3>参考文献の書き方</h3>
-        <p>安藤研では <code>thebibliography</code> 環境と <code>\bibitem</code> を使って参考文献を管理します。</p>
-
-        <div class="step-box">
-          <h4>基本形</h4>
-          <pre><code>\begin{thebibliography}{00}
-
-\bibitem{ラベル名}
-著者名: タイトル. \textit{雑誌名} \textbf{巻} (年) ページ.
-
-\end{thebibliography}</code></pre>
-          <p><code>{00}</code> は参考文献の数が2桁であることを示します（文献数が多いときは <code>{99}</code> にする）。</p>
-        </div>
-
-        <h4>論文の場合</h4>
-        <pre><code>\bibitem{pardalos1999}
-P.M. Pardalos and G. Xue: Algorithms for a class of isotonic
-regression problems. \textit{Algorithmica} \textbf{23} (1999) 211--222.</code></pre>
-        <p>形式: <code>著者: タイトル. \textit{雑誌名} \textbf{巻} (年) ページ.</code></p>
-
-        <h4>書籍の場合</h4>
-        <pre><code>\bibitem{semple2003}
-C. Semple and M. Steel: \textit{Phylogenetics}
-(Oxford University Press, 2003).</code></pre>
-        <p>形式: <code>著者: \textit{書名} (出版社, 年).</code></p>
-
-        <h4>修士論文・卒業論文の場合</h4>
-        <pre><code>\bibitem{ishida25}
-石田京太郎: 重み付き$\ell_1$最良近似超距離木問題に対する
-部分木交換操作に基づく局所探索アルゴリズム.
-修士論文. 静岡大学大学院総合科学技術研究科, 2025年2月.</code></pre>
-        <p>形式: <code>著者: タイトル. 修士論文. 大学名, 年月.</code></p>
-
-        <h4>本文中での引用</h4>
-        <pre><code>Pardalosら\cite{pardalos1999}は、半順序上の単調回帰問題に対して...</code></pre>
-        <p><code>\cite{ラベル名}</code> と書くと、自動的に <code>[1]</code> のように番号が振られます。</p>
-
-        <div class="note">
-          <p>ラベル名は自由に決められますが、<code>著者名+年</code>（例: <code>pardalos1999</code>）や<code>著者イニシャル+年</code>（例: <code>AC11</code>）が一般的です。</p>
-        </div>
-      </section>
-
-      <section>
         <h3>よく使うコマンド</h3>
         <table>
           <thead><tr><th>コマンド</th><th>説明</th><th>出力例</th></tr></thead>
