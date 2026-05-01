@@ -12,23 +12,12 @@
     <div class="header-inner">
       <h1>安藤研究室</h1>
       <p class="subtitle">新四年生向けガイド（2026年度版）</p>
-      <form id="secret-search" onsubmit="return false;" style="margin-top:1.2rem;">
+      <form id="secret-search" onsubmit="return false;">
         <input
           type="text"
           id="secret-input"
           placeholder="キーワードを入力..."
           autocomplete="off"
-          style="
-            padding: 0.5rem 1.1rem;
-            border-radius: 999px;
-            border: none;
-            background: rgba(255,255,255,0.15);
-            color: #fff;
-            font-size: 0.9rem;
-            width: 220px;
-            outline: none;
-            letter-spacing: 0.04em;
-          "
         >
       </form>
     </div>
@@ -90,25 +79,46 @@
   </main>
 
   <footer>
-    <p>安藤研究室 新四年生向けガイド</p>
+    <p>安藤研究室 新四年生向けガイド &copy; 2026</p>
   </footer>
 
   <script>
     const pages = [
-      { url: 'schedule.html', keywords: ['スケジュール','年間','イベント','飲み会','bbq','発表会','行事'] },
-      { url: 'seminar.html',  keywords: ['ゼミ','セミナー','発表','輪読','プレゼン'] },
-      { url: 'exam.html',     keywords: ['院試','大学院','入試','試験'] },
-      { url: 'thesis.html',   keywords: ['卒論','卒業研究','報告書','中間発表','最終発表'] },
-      { url: 'tools.html',    keywords: ['ツール','git','ssh','tmux','tgif','gnuplot','環境'] },
-      { url: 'equipment.html',keywords: ['設備','pc','パソコン','印刷','プリンター','ネットワーク','wifi'] },
-      { url: 'duties.html',   keywords: ['仕事','当番','ごみ','掃除','補充','役割'] },
-      { url: 'papers.html',   keywords: ['論文','ペーパー','文献','研究','検索','データベース'] },
-      { url: 'methods.html',  keywords: ['手法','回帰','最適化','アルゴリズム','数学','統計'] },
-      { url: 'tex.html',      keywords: ['tex','latex','レポート','フォーマット','数式'] },
-      { url: 'feedback.html', keywords: ['意見','質問','フィードバック','github','匿名'] },
+      { url: 'schedule.html',  label: '年間スケジュール', keywords: ['スケジュール','年間','イベント','飲み会','bbq','発表会','行事'] },
+      { url: 'seminar.html',   label: 'ゼミ',             keywords: ['ゼミ','セミナー','発表','輪読','プレゼン'] },
+      { url: 'exam.html',      label: '院試',             keywords: ['院試','大学院','入試','試験'] },
+      { url: 'thesis.html',    label: '卒業研究',         keywords: ['卒論','卒業研究','報告書','中間発表','最終発表'] },
+      { url: 'tools.html',     label: 'ツール',           keywords: ['ツール','git','ssh','tmux','tgif','gnuplot','環境'] },
+      { url: 'equipment.html', label: '研究室の設備',     keywords: ['設備','pc','パソコン','印刷','プリンター','ネットワーク','wifi'] },
+      { url: 'duties.html',    label: '研究室の仕事',     keywords: ['仕事','当番','ごみ','掃除','補充','役割'] },
+      { url: 'papers.html',    label: '論文検索',         keywords: ['論文','ペーパー','文献','研究','検索','データベース'] },
+      { url: 'methods.html',   label: '研究手法',         keywords: ['手法','回帰','最適化','アルゴリズム','数学','統計'] },
+      { url: 'tex.html',       label: 'TeX',              keywords: ['tex','latex','レポート','フォーマット','数式'] },
+      { url: 'feedback.html',  label: 'フィードバック',  keywords: ['意見','質問','フィードバック','github','匿名'] },
     ];
 
     const inp = document.getElementById('secret-input');
+    let dropdown = null;
+
+    function clearDropdown() {
+      if (dropdown) { dropdown.remove(); dropdown = null; }
+    }
+
+    function showDropdown(hits) {
+      clearDropdown();
+      dropdown = document.createElement('ul');
+      dropdown.id = 'search-dropdown';
+      hits.forEach(p => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = p.url;
+        a.textContent = p.label;
+        li.appendChild(a);
+        dropdown.appendChild(li);
+      });
+      inp.parentElement.appendChild(dropdown);
+    }
+
     inp.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter') return;
       const val = inp.value.trim();
@@ -118,17 +128,22 @@
         return;
       }
       const q = val.toLowerCase();
-      const hit = pages.find(p => p.keywords.some(k => k.includes(q) || q.includes(k)));
-      if (hit) {
-        window.location.href = hit.url;
+      const hits = pages.filter(p => p.keywords.some(k => k.includes(q) || q.includes(k)));
+      if (hits.length === 1) {
+        window.location.href = hits[0].url;
+      } else if (hits.length > 1) {
+        showDropdown(hits);
       } else {
+        clearDropdown();
         inp.placeholder = '見つかりません';
         inp.value = '';
         setTimeout(() => inp.placeholder = 'キーワードを入力...', 2000);
       }
     });
-    inp.addEventListener('focus', () => inp.style.background = 'rgba(255,255,255,0.25)');
-    inp.addEventListener('blur',  () => inp.style.background = 'rgba(255,255,255,0.15)');
+
+    document.addEventListener('click', (e) => {
+      if (dropdown && !dropdown.contains(e.target) && e.target !== inp) clearDropdown();
+    });
   </script>
 
 </body>

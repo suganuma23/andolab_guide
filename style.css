@@ -31,6 +31,60 @@ header h1 {
   letter-spacing: 0.05em;
 }
 
+/* ===== Header Search ===== */
+#secret-search {
+  margin-top: 1.2rem;
+  position: relative;
+  display: inline-block;
+}
+
+#secret-input {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.9rem;
+  width: 220px;
+  outline: none;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+
+#secret-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+#secret-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0.4rem 0;
+  margin: 0;
+  min-width: 180px;
+  z-index: 100;
+}
+
+#search-dropdown li a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #1a1a2e;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+#search-dropdown li a:hover {
+  background: #f0f2f5;
+}
+
 /* ===== Home Card Grid ===== */
 .home {
   max-width: 1000px;
