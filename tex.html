@@ -43,6 +43,36 @@
     @media (max-width: 600px) {
       .tab-btn { padding: 0.5rem 0.8rem; font-size: 0.82rem; }
     }
+    .exercise-block {
+      border: 2px solid #0f3460;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .exercise-block h3 {
+      color: #0f3460;
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+    .pdf-frame {
+      width: 100%;
+      height: 480px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin: 0.75rem 0 1rem;
+    }
+    .img-frame {
+      display: flex;
+      gap: 1rem;
+      margin: 0.75rem 0 1rem;
+      flex-wrap: wrap;
+    }
+    .img-frame img {
+      max-width: 48%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .cmd-table td:first-child { white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -262,134 +292,356 @@ C. Semple and M. Steel: \textit{Phylogenetics}
 
       <section>
         <h2>練習テンプレートとは</h2>
-        <p>安藤研でよく使うTeX記法を一通り練習するためのテンプレートです。数式・図・アルゴリズム・表の書き方が例題付きでまとまっています。</p>
+        <p>安藤研でよく使うTeX記法を一通り練習するためのテンプレートです。<strong>数式・図・アルゴリズム・表</strong>の4テーマで、それぞれ正解PDFを再現する形式で練習します。</p>
         <div class="step-box">
           <h4>ダウンロード</h4>
-          <p><a href="templates/practice_tex.zip" download>practice_tex.zip</a>（<code>practice.tex</code> と参照用PDFが入っています）</p>
+          <p><a href="templates/practice_tex.zip" download>practice_tex.zip</a> — <code>practice.tex</code>（問題ファイル）と参照用PDFが入っています。</p>
+          <p>展開したら <code>practice.tex</code> を編集してコンパイルし、各セクションの空欄部分を埋めていきます。</p>
         </div>
       </section>
 
+      <!-- ===== プリアンブル ===== -->
       <section>
-        <h2>プリアンブル（セットアップ）</h2>
-        <p>ファイル冒頭の <code>\begin{document}</code> より前の部分です。パッケージの読み込みや自作コマンドの定義を行います。</p>
+        <h2>0. プリアンブル（セットアップ）</h2>
+        <p><code>\begin{document}</code> より前の部分です。練習ファイルでは以下が設定済みです。</p>
 
         <h3>ドキュメントクラス</h3>
         <pre><code>\documentclass[11pt]{jarticle}</code></pre>
-        <p><code>jarticle</code> は日本語対応のドキュメントクラスです。安藤研では基本的にこれを使います（<code>jsarticle</code> でも可）。</p>
+        <p><code>jarticle</code> は日本語対応クラスです。安藤研では基本的にこれを使います。</p>
 
-        <h3>よく使うパッケージ</h3>
-        <table>
+        <h3>主要パッケージ一覧</h3>
+        <table class="cmd-table">
           <thead><tr><th>パッケージ</th><th>用途</th></tr></thead>
           <tbody>
-            <tr><td><code>amsmath, amssymb</code></td><td>数式・数学記号の拡張</td></tr>
-            <tr><td><code>amsthm</code></td><td>定理・補題などの環境</td></tr>
-            <tr><td><code>algorithm2e</code></td><td>アルゴリズムの疑似コード</td></tr>
-            <tr><td><code>graphicx</code></td><td>画像の挿入</td></tr>
+            <tr><td><code>amsmath, amssymb</code></td><td>数式・数学記号の拡張（必須）</td></tr>
+            <tr><td><code>amsthm</code></td><td>定理・補題などの <code>\newtheorem</code> 環境</td></tr>
+            <tr><td><code>algorithm2e</code></td><td>アルゴリズムの疑似コード（演習3で使用）</td></tr>
+            <tr><td><code>graphicx</code></td><td>画像の挿入（演習2で使用）</td></tr>
             <tr><td><code>float</code></td><td>図・表を <code>[H]</code> でその場に固定</td></tr>
-            <tr><td><code>tikz</code></td><td>図形描画</td></tr>
-            <tr><td><code>caption, subcaption</code></td><td>キャプションのカスタマイズ・サブ図</td></tr>
-            <tr><td><code>ascmac</code></td><td>囲み枠（screen環境など）</td></tr>
+            <tr><td><code>subcaption</code></td><td>図を横並びにするサブ図（演習2で使用）</td></tr>
             <tr><td><code>lscape</code></td><td>特定ページを横向きにする</td></tr>
-            <tr><td><code>enumerate</code></td><td>箇条書き番号のカスタマイズ</td></tr>
-            <tr><td><code>url</code></td><td>URL表示</td></tr>
-            <tr><td><code>comment</code></td><td>複数行のコメントアウト</td></tr>
+            <tr><td><code>ascmac</code></td><td>囲み枠（screen環境など）</td></tr>
           </tbody>
         </table>
 
         <h3>自作コマンド（\newcommand）</h3>
-        <p>よく使う記号は <code>\newcommand</code> で短縮名を定義しておくと便利です。</p>
+        <p>よく使う数学記号に短縮名を付けます。本文で <code>$\real$</code> と書くだけでℝが出ます。</p>
         <pre><code>\newcommand{\real}{{\mathbb R}}   % 実数 ℝ
 \newcommand{\zahl}{{\mathbb Z}}   % 整数 ℤ
 \newcommand{\rati}{{\mathbb Q}}   % 有理数 ℚ
 \newcommand{\comp}{{\mathbb C}}   % 複素数 ℂ
 \newcommand{\napier}{{\rm e}}     % 自然対数の底 e</code></pre>
-        <p>これにより本文中で <code>$\real$</code> と書くだけで ℝ が出せます。</p>
 
         <h3>定理環境（\newtheorem）</h3>
-        <p>定理・補題などの環境はあらかじめ定義しておきます。</p>
-        <pre><code>\newtheorem{theorem}{定理}[section]
-\newtheorem{lemma}[theorem]{補題}
+        <p>定理・補題などはプリアンブルで定義してから使います。</p>
+        <pre><code>\newtheorem{theorem}{定理}[section]   % 節番号と連動
+\newtheorem{lemma}[theorem]{補題}      % theorem と通し番号を共有
 \newtheorem{corollary}[theorem]{系}
 \newtheorem{proposition}[theorem]{命題}
 \newtheorem{defe}[theorem]{定義}
 \newtheorem{example}{例題}[section]
 \newtheorem{claim}[theorem]{主張}</code></pre>
-        <p><code>[section]</code> は節番号と連動して番号付けする指定です。<code>[theorem]</code> は定理と通し番号を共有する指定です。</p>
-        <p>使い方：</p>
-        <pre><code>\begin{theorem}
+        <div class="note">
+          <p><code>[section]</code> は「節番号.定理番号」形式（例: 補題 1.1）になる指定です。<br>
+          <code>[theorem]</code> は theorem と番号を共有する指定です（補題と定理が混在しても通し番号になる）。</p>
+        </div>
+
+        <h3>証明環境のカスタマイズ</h3>
+        <pre><code>\renewcommand\proofname{\bf 証明}</code></pre>
+        <p><code>amsthm</code> の proof 環境は初期状態では "Proof." と表示されます。上記で「証明.」に変更しています。</p>
+      </section>
+
+      <!-- ===== 演習1: 数式 ===== -->
+      <section>
+        <h2>演習1: 数式</h2>
+        <p>正解PDF（<code>pdf/sample0.pdf</code>）の Section 1「数式」を再現します。補題・証明・複数行の整列数式が含まれます。</p>
+
+        <p><strong>正解PDF:</strong></p>
+        <iframe src="templates/practice_tex/sample0.pdf" class="pdf-frame"></iframe>
+
+        <div class="exercise-block">
+          <h3>① 補題環境</h3>
+          <p>本文中に「補題 1.1.」のような番号付き補題を出すには <code>lemma</code> 環境を使います。</p>
+          <pre><code>\begin{lemma} \label{lem:cost}
 {\rm
-〜〜〜定理の内容〜〜〜
+木 $T$ の任意の内部点 $u$ を選ぶ．$T[u]$ を...
 }
-\end{theorem}</code></pre>
-        <div class="note"><p><code>{\rm ...}</code> で囲むのは定理環境内の文字がイタリックになるのを防ぐためです。</p></div>
-      </section>
+\end{lemma}</code></pre>
+          <div class="note">
+            <p><code>{\rm ...}</code> で囲むのは必須ではありませんが、定理環境内のテキストはデフォルトでイタリック体になるため、日本語混じりの文章では可読性が落ちます。<code>{\rm}</code> でローマン体にするのが安藤研の慣習です。</p>
+          </div>
+        </div>
 
-      <section>
-        <h2>数式の書き方</h2>
-
-        <h3>インライン数式</h3>
-        <p>文中に数式を入れるときは <code>$...$</code> で囲みます。数式中の文字は文中でも必ず <code>$x$</code> のように囲む必要があります。</p>
-        <pre><code>変数 $x$ の値は $f(x) = 2x+1$ である．</code></pre>
-
-        <h3>別行立て数式</h3>
-        <pre><code>\begin{equation} \label{equ:example}
-y = 2x+1
+        <div class="exercise-block">
+          <h3>② equation 環境（番号付き数式）</h3>
+          <p>1行の独立した数式を番号付きで書くには <code>equation</code> 環境を使います。</p>
+          <pre><code>\begin{equation} \label{equ:cost}
+\mathrm{cost}(T') = \mathrm{cost}(T) - \mathrm{cost}(T[u]) + \mathrm{cost}(T'_u),
 \end{equation}</code></pre>
-        <p>番号が不要な場合は <code>equation*</code> を使います。</p>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>\mathrm{cost}</code></td><td>関数名などをローマン体で表示（イタリックにしない）</td></tr>
+              <tr><td><code>T'_u</code></td><td>プライム付き添字。<code>'</code> はプライム、<code>_u</code> は下付き</td></tr>
+              <tr><td><code>\label{equ:cost}</code></td><td>後で <code>\eqref{equ:cost}</code> で参照するためのラベル</td></tr>
+            </tbody>
+          </table>
+          <p>番号が不要な場合は <code>equation*</code> を使います。</p>
+          <pre><code>d_{T'}(i,j) = |\mathrm{leaves}(T'[i \vee j])| - 1</code></pre>
+          <div class="note">
+            <p><code>|...|</code> で絶対値（縦棒）を書けますが、大きな数式には <code>\left|...\right|</code> を使うと自動的にサイズが合います。</p>
+          </div>
+        </div>
 
-        <h3>参照</h3>
-        <pre><code>% 数式の参照
-式~\eqref{equ:example}に示すように...
+        <div class="exercise-block">
+          <h3>③ proof 環境（証明）</h3>
+          <p>証明は <code>proof</code> 環境で書きます。<code>\end{proof}</code> で自動的に □ が付きます。</p>
+          <pre><code>\begin{proof}
+費用関数は
+\begin{equation} \label{equ:cost2}
+\mathrm{cost}(T) = \sum_{\{i,j\}\in E} w_{ij} d_T(i,j) + \mathrm{constant}.
+\end{equation}
+である．...
+\end{proof}</code></pre>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>\sum_{\{i,j\}\in E}</code></td><td>総和記号。添字が <code>{}</code> を含むので <code>\{</code> でエスケープ</td></tr>
+              <tr><td><code>w_{ij}</code></td><td>2文字以上の下付きは <code>{}</code> で囲む</td></tr>
+              <tr><td><code>d_T(i,j)</code></td><td>下付きが1文字なら <code>{}</code> 不要</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-% 図・表・節の参照
-図~\ref{fig:graph}に示すように...</code></pre>
-        <div class="note"><p><code>~</code> は改行されない空白（ノーブレークスペース）です。「図 1」の間で改行されるのを防ぐために使います。</p></div>
+        <div class="exercise-block">
+          <h3>④ align 環境（複数行の整列数式）</h3>
+          <p>複数行にわたる変形や計算を縦に揃えるには <code>align</code> 環境を使います。</p>
+          <pre><code>\begin{align}
+\mathrm{constant}
+  &amp;= \mathrm{cost}(T) - \sum_{\{i,j\}\in E} w_{ij} d_T(i,j) \notag \\
+  &amp;= \mathrm{cost}(T) - \sum_{\{i,j\}\in E} w_{ij}(|\mathrm{leaves}(T[i\vee j])|-1) \notag \\
+  &amp;= \sum_{\{i,j\}\in E} w_{ij} \label{equ:const}
+\end{align}</code></pre>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>&amp;=</code></td><td>= の位置で縦に揃える（揃えたい場所に <code>&amp;</code> を置く）</td></tr>
+              <tr><td><code>\\</code></td><td>改行。最後の行には不要</td></tr>
+              <tr><td><code>\notag</code></td><td>その行の数式番号を省略。番号を付けたい行だけ <code>\label{}</code> を書く</td></tr>
+            </tbody>
+          </table>
+          <div class="note">
+            <p>数式の参照は <code>\eqref{}</code> を使います（<code>\ref{}</code> では括弧が付かない）。</p>
+            <pre><code>式~\eqref{equ:const}より，...</code></pre>
+          </div>
+        </div>
       </section>
 
+      <!-- ===== 演習2: 図の挿入 ===== -->
       <section>
-        <h2>アルゴリズムの書き方</h2>
-        <p><code>algorithm2e</code> パッケージを使います。</p>
-        <pre><code>\IncMargin{0.5em}
+        <h2>演習2: 図の挿入</h2>
+        <p>正解PDF（<code>pdf/sample0.pdf</code>）の Section 2「図の挿入」を再現します。<code>sample1.png</code> と <code>sample2.png</code> の2枚を横並びに配置します。</p>
+
+        <p><strong>使用する画像:</strong></p>
+        <div class="img-frame">
+          <img src="templates/practice_tex/sample1.png" alt="sample1">
+          <img src="templates/practice_tex/sample2.png" alt="sample2">
+        </div>
+
+        <div class="exercise-block">
+          <h3>① 1枚だけ挿入する基本形</h3>
+          <pre><code>\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{sample1.png}
+  \caption{キャプション文．}
+  \label{fig:sample1}
+\end{figure}</code></pre>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド・オプション</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>[htbp]</code></td><td>配置優先順位: here / top / bottom / page。<code>[H]</code> で強制配置（float パッケージ必要）</td></tr>
+              <tr><td><code>\centering</code></td><td>図を中央揃えにする</td></tr>
+              <tr><td><code>width=0.6\linewidth</code></td><td>本文幅の60%にリサイズ。<code>\linewidth</code> は現在の行幅</td></tr>
+              <tr><td><code>\caption{}</code></td><td>図のキャプション（図では <strong>下</strong> に書く）</td></tr>
+              <tr><td><code>\label{}</code></td><td><code>\caption</code> の後に書かないと番号がずれる</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="exercise-block">
+          <h3>② 2枚を横並びにする（subcaption）</h3>
+          <p><code>subcaption</code> パッケージの <code>subfigure</code> 環境を使います。</p>
+          <pre><code>\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{sample1.png}
+    \caption{sample1のキャプション．}
+    \label{fig:sub1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{sample2.png}
+    \caption{sample2のキャプション．}
+    \label{fig:sub2}
+  \end{subfigure}
+  \caption{全体のキャプション．}
+  \label{fig:both}
+\end{figure}</code></pre>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>subfigure[b]{0.45\linewidth}</code></td><td>幅 45% のサブ図ボックス。<code>[b]</code> は下端揃え</td></tr>
+              <tr><td><code>\hfill</code></td><td>2枚の間を均等に広げる水平スペース</td></tr>
+              <tr><td><code>width=\linewidth</code></td><td>subfigure ボックス内での幅（親ボックスの幅いっぱい）</td></tr>
+            </tbody>
+          </table>
+          <div class="note">
+            <p>サブ図は <code>\subref{fig:sub1}</code> で「(a)」のように参照できます。<br>
+            2枚の幅の合計が 1.0 を超えると改行されるので、合計が 0.9〜0.95 程度になるように調整します。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 演習3: アルゴリズム ===== -->
+      <section>
+        <h2>演習3: アルゴリズム</h2>
+        <p>正解PDF（<code>pdf/alg.pdf</code>）を再現します。<code>algorithm2e</code> パッケージを使います。</p>
+
+        <p><strong>正解PDF:</strong></p>
+        <iframe src="templates/practice_tex/alg.pdf" class="pdf-frame"></iframe>
+
+        <div class="exercise-block">
+          <h3>① パッケージの読み込みオプション</h3>
+          <pre><code>\usepackage[lined,linesnumbered,boxed]{algorithm2e}</code></pre>
+          <table class="cmd-table">
+            <thead><tr><th>オプション</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>lined</code></td><td>ブロックの左側に縦線を引く</td></tr>
+              <tr><td><code>linesnumbered</code></td><td>各行に行番号を付ける</td></tr>
+              <tr><td><code>boxed</code></td><td>アルゴリズム全体を枠で囲む</td></tr>
+            </tbody>
+          </table>
+          <p>また、日本語表示のためにプリアンブルで以下を設定します。</p>
+          <pre><code>\SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
+\SetKwInput{KwIn}{入力}
+\SetKwInput{KwOut}{出力}
+\SetKwRepeat{Do}{do}{while}   % do-while ループ用</code></pre>
+        </div>
+
+        <div class="exercise-block">
+          <h3>② 基本構造</h3>
+          <pre><code>\IncMargin{0.5em}
 \begin{algorithm}
-\caption{アルゴリズム名．}
-\label{alg:name}
-\KwIn{入力の説明．}
-\KwOut{出力の説明．}
-ステップ1を実行する;\\
-ステップ2を実行する;\\
-\Return 結果;
+\caption{局所探索アルゴリズム．}
+\label{alg:local}
+\KwIn{$X$ 上の相違行列 $M$, 自然数 $k \geq 1$.}
+\KwOut{$k$SS 近傍に関して局所最適な $X$ 上の 2 分木 $T$.}
+初期の $X$ 上の 2 分木 $T = (V, E)$ を構成;\\
+...
 \end{algorithm}
 \DecMargin{0.5em}</code></pre>
-        <p><code>\IncMargin</code> / <code>\DecMargin</code> はアルゴリズムのインデント調整です。日本語表示にするにはプリアンブルで以下を設定します。</p>
-        <pre><code>\SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
-\SetKwInput{KwIn}{入力}
-\SetKwInput{KwOut}{出力}</code></pre>
+          <div class="note">
+            <p><code>\IncMargin</code> / <code>DecMargin</code> はアルゴリズムの左余白の調整です。<code>\IncMargin{0.5em}</code> で開始し、<code>\DecMargin{0.5em}</code> で元に戻します。</p>
+          </div>
+        </div>
+
+        <div class="exercise-block">
+          <h3>③ 代入・条件分岐・do-while</h3>
+          <pre><code>\Do{$\mathrm{swap} \neq 0$}{
+  $\mathrm{swap} \leftarrow 0$;\\
+  $T'$ を $T$ の $k$SS 近傍の中で $f(T')$ を最大化する 2 分木とする;\\
+  \If{$f(T') > f(T)$}{
+    $T \leftarrow T'$;\\
+    $\mathrm{swap} \leftarrow 1$;\\
+    $|L(T_v)|$ $(v \in V)$ を更新する;\\
+    $W$ を更新する;\\
+  }
+}</code></pre>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>\Do{条件}{本文}</code></td><td>do-while ループ。<code>\SetKwRepeat{Do}{do}{while}</code> で定義</td></tr>
+              <tr><td><code>\If{条件}{本文}</code></td><td>if 文。<code>then</code> / <code>end</code> は自動挿入</td></tr>
+              <tr><td><code>\leftarrow</code></td><td>← （代入を表す矢印）</td></tr>
+              <tr><td><code>\neq</code></td><td>≠</td></tr>
+              <tr><td><code>\\</code></td><td>アルゴリズム内の改行。各ステップの末尾に付ける</td></tr>
+            </tbody>
+          </table>
+          <div class="note">
+            <p>アルゴリズム内のテキストはデフォルトで数式モード外です。変数名を斜体にしたい場合は <code>$T$</code> のように <code>$...$</code> で囲みます。</p>
+          </div>
+        </div>
       </section>
 
+      <!-- ===== 演習4: 表 ===== -->
       <section>
-        <h2>表の書き方</h2>
-        <pre><code>\begin{table}[H]
-\caption{キャプション名．}
-\label{tab:name}
-\begin{tabular}{c|c|c}
- 列1 &amp; 列2 &amp; 列3 \\ \hline
- 値A &amp; 値B &amp; 値C \\
+        <h2>演習4: 表</h2>
+        <p>正解PDF（<code>pdf/table.pdf</code>）を再現します。二重縦線・床関数・天井関数を含む複雑な表です。</p>
+
+        <p><strong>正解PDF:</strong></p>
+        <iframe src="templates/practice_tex/table.pdf" class="pdf-frame" style="height:300px;"></iframe>
+
+        <div class="exercise-block">
+          <h3>① 表の基本構造（キャプションは上）</h3>
+          <p>表のキャプションは <strong>上</strong> に書きます（図と逆）。</p>
+          <pre><code>\begin{table}[H]
+\caption{表のキャプション．}
+\label{tab:result}
+\begin{tabular}{r||cccccc}
+\hline
+ 列1 &amp; 列2 &amp; 列3 &amp; 列4 &amp; 列5 &amp; 列6 &amp; 列7 \\ \hline
+ 値  &amp; 値  &amp; 値  &amp; 値  &amp; 値  &amp; 値  &amp; 値  \\
+\hline
 \end{tabular}
 \centering
 \end{table}</code></pre>
-        <p>列指定の意味：</p>
-        <table>
-          <thead><tr><th>指定</th><th>意味</th></tr></thead>
-          <tbody>
-            <tr><td><code>c</code></td><td>中央揃え</td></tr>
-            <tr><td><code>l</code></td><td>左揃え</td></tr>
-            <tr><td><code>r</code></td><td>右揃え</td></tr>
-            <tr><td><code>|</code></td><td>縦線</td></tr>
-            <tr><td><code>||</code></td><td>二重縦線</td></tr>
-          </tbody>
-        </table>
-        <p><code>\hline</code> で横線、<code>&amp;</code> で列区切り、<code>\\</code> で行末です。</p>
-        <div class="note"><p><code>[H]</code> は <code>float</code> パッケージが必要です。表をソースコードと同じ位置に強制配置します。</p></div>
+          <table class="cmd-table">
+            <thead><tr><th>列指定</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>r</code> / <code>c</code> / <code>l</code></td><td>右 / 中央 / 左揃え</td></tr>
+              <tr><td><code>|</code></td><td>縦線1本</td></tr>
+              <tr><td><code>||</code></td><td>縦線2本（二重線）</td></tr>
+              <tr><td><code>\hline</code></td><td>横線。表の上下と見出し行の後に書く</td></tr>
+              <tr><td><code>&amp;</code></td><td>列区切り</td></tr>
+              <tr><td><code>\\</code></td><td>行末</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="exercise-block">
+          <h3>② 床関数・天井関数</h3>
+          <p>正解の表のヘッダーには <code>⌊t/2⌋</code>（床関数）や <code>⌈t/4⌉</code>（天井関数）が含まれます。</p>
+          <table class="cmd-table">
+            <thead><tr><th>コマンド</th><th>出力</th><th>意味</th></tr></thead>
+            <tbody>
+              <tr><td><code>\lfloor x \rfloor</code></td><td>⌊x⌋</td><td>床関数（切り捨て）</td></tr>
+              <tr><td><code>\lceil x \rceil</code></td><td>⌈x⌉</td><td>天井関数（切り上げ）</td></tr>
+            </tbody>
+          </table>
+          <p>ネストした場合の例：</p>
+          <pre><code>% ⌊⌊t/2⌋/2⌋
+$\lfloor \lfloor t/2 \rfloor /2 \rfloor$
+
+% ⌊⌈t/4⌉/2⌋
+$\lfloor \lceil t/4 \rceil /2 \rfloor$</code></pre>
+          <div class="note">
+            <p>括弧を式の高さに合わせて自動調整したい場合は <code>\left\lfloor ... \right\rfloor</code> を使います。ただし表のヘッダーのような小さい文字では <code>\left/\right</code> なしで十分です。</p>
+          </div>
+        </div>
+
+        <div class="exercise-block">
+          <h3>③ 正解の表の列指定</h3>
+          <p>正解PDFの表は「1列目が右揃え・二重縦線・残り6列が中央揃え」の構成です。</p>
+          <pre><code>\begin{tabular}{r||cccccc}</code></pre>
+          <p>ヘッダー行の書き方（床関数・天井関数を含む）：</p>
+          <pre><code>$r$ &amp; $\lfloor t/2 \rfloor$ &amp; $\lfloor t/4 \rfloor$
+  &amp; $\lfloor \lfloor t/2 \rfloor /2 \rfloor$
+  &amp; $\lfloor \lceil t/4 \rceil /2 \rfloor$
+  &amp; $\lceil \lfloor t/2 \rfloor /2 \rceil$
+  &amp; $\lceil \lceil t/4 \rceil /2 \rceil$ \\ \hline</code></pre>
+        </div>
       </section>
 
     </div><!-- /tab-practice -->
