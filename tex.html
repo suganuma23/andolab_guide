@@ -57,6 +57,7 @@
 
     <div class="tab-bar">
       <button class="tab-btn active" data-tab="about">TeXとは</button>
+      <button class="tab-btn" data-tab="practice">練習テンプレート</button>
       <button class="tab-btn" data-tab="format">安藤研TeXフォーマットメモ</button>
     </div>
 
@@ -253,6 +254,145 @@ C. Semple and M. Steel: \textit{Phylogenetics}
       </section>
 
     </div><!-- /tab-format -->
+
+    <!-- ============================================================ -->
+    <!-- 3. 練習テンプレート -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-practice">
+
+      <section>
+        <h2>練習テンプレートとは</h2>
+        <p>安藤研でよく使うTeX記法を一通り練習するためのテンプレートです。数式・図・アルゴリズム・表の書き方が例題付きでまとまっています。</p>
+        <div class="step-box">
+          <h4>ダウンロード</h4>
+          <p><a href="templates/practice_tex.zip" download>practice_tex.zip</a>（<code>practice.tex</code> と参照用PDFが入っています）</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>プリアンブル（セットアップ）</h2>
+        <p>ファイル冒頭の <code>\begin{document}</code> より前の部分です。パッケージの読み込みや自作コマンドの定義を行います。</p>
+
+        <h3>ドキュメントクラス</h3>
+        <pre><code>\documentclass[11pt]{jarticle}</code></pre>
+        <p><code>jarticle</code> は日本語対応のドキュメントクラスです。安藤研では基本的にこれを使います（<code>jsarticle</code> でも可）。</p>
+
+        <h3>よく使うパッケージ</h3>
+        <table>
+          <thead><tr><th>パッケージ</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td><code>amsmath, amssymb</code></td><td>数式・数学記号の拡張</td></tr>
+            <tr><td><code>amsthm</code></td><td>定理・補題などの環境</td></tr>
+            <tr><td><code>algorithm2e</code></td><td>アルゴリズムの疑似コード</td></tr>
+            <tr><td><code>graphicx</code></td><td>画像の挿入</td></tr>
+            <tr><td><code>float</code></td><td>図・表を <code>[H]</code> でその場に固定</td></tr>
+            <tr><td><code>tikz</code></td><td>図形描画</td></tr>
+            <tr><td><code>caption, subcaption</code></td><td>キャプションのカスタマイズ・サブ図</td></tr>
+            <tr><td><code>ascmac</code></td><td>囲み枠（screen環境など）</td></tr>
+            <tr><td><code>lscape</code></td><td>特定ページを横向きにする</td></tr>
+            <tr><td><code>enumerate</code></td><td>箇条書き番号のカスタマイズ</td></tr>
+            <tr><td><code>url</code></td><td>URL表示</td></tr>
+            <tr><td><code>comment</code></td><td>複数行のコメントアウト</td></tr>
+          </tbody>
+        </table>
+
+        <h3>自作コマンド（\newcommand）</h3>
+        <p>よく使う記号は <code>\newcommand</code> で短縮名を定義しておくと便利です。</p>
+        <pre><code>\newcommand{\real}{{\mathbb R}}   % 実数 ℝ
+\newcommand{\zahl}{{\mathbb Z}}   % 整数 ℤ
+\newcommand{\rati}{{\mathbb Q}}   % 有理数 ℚ
+\newcommand{\comp}{{\mathbb C}}   % 複素数 ℂ
+\newcommand{\napier}{{\rm e}}     % 自然対数の底 e</code></pre>
+        <p>これにより本文中で <code>$\real$</code> と書くだけで ℝ が出せます。</p>
+
+        <h3>定理環境（\newtheorem）</h3>
+        <p>定理・補題などの環境はあらかじめ定義しておきます。</p>
+        <pre><code>\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{defe}[theorem]{定義}
+\newtheorem{example}{例題}[section]
+\newtheorem{claim}[theorem]{主張}</code></pre>
+        <p><code>[section]</code> は節番号と連動して番号付けする指定です。<code>[theorem]</code> は定理と通し番号を共有する指定です。</p>
+        <p>使い方：</p>
+        <pre><code>\begin{theorem}
+{\rm
+〜〜〜定理の内容〜〜〜
+}
+\end{theorem}</code></pre>
+        <div class="note"><p><code>{\rm ...}</code> で囲むのは定理環境内の文字がイタリックになるのを防ぐためです。</p></div>
+      </section>
+
+      <section>
+        <h2>数式の書き方</h2>
+
+        <h3>インライン数式</h3>
+        <p>文中に数式を入れるときは <code>$...$</code> で囲みます。数式中の文字は文中でも必ず <code>$x$</code> のように囲む必要があります。</p>
+        <pre><code>変数 $x$ の値は $f(x) = 2x+1$ である．</code></pre>
+
+        <h3>別行立て数式</h3>
+        <pre><code>\begin{equation} \label{equ:example}
+y = 2x+1
+\end{equation}</code></pre>
+        <p>番号が不要な場合は <code>equation*</code> を使います。</p>
+
+        <h3>参照</h3>
+        <pre><code>% 数式の参照
+式~\eqref{equ:example}に示すように...
+
+% 図・表・節の参照
+図~\ref{fig:graph}に示すように...</code></pre>
+        <div class="note"><p><code>~</code> は改行されない空白（ノーブレークスペース）です。「図 1」の間で改行されるのを防ぐために使います。</p></div>
+      </section>
+
+      <section>
+        <h2>アルゴリズムの書き方</h2>
+        <p><code>algorithm2e</code> パッケージを使います。</p>
+        <pre><code>\IncMargin{0.5em}
+\begin{algorithm}
+\caption{アルゴリズム名．}
+\label{alg:name}
+\KwIn{入力の説明．}
+\KwOut{出力の説明．}
+ステップ1を実行する;\\
+ステップ2を実行する;\\
+\Return 結果;
+\end{algorithm}
+\DecMargin{0.5em}</code></pre>
+        <p><code>\IncMargin</code> / <code>\DecMargin</code> はアルゴリズムのインデント調整です。日本語表示にするにはプリアンブルで以下を設定します。</p>
+        <pre><code>\SetAlgorithmName{アルゴリズム}{アルゴリズム}{アルゴリズムのリスト}
+\SetKwInput{KwIn}{入力}
+\SetKwInput{KwOut}{出力}</code></pre>
+      </section>
+
+      <section>
+        <h2>表の書き方</h2>
+        <pre><code>\begin{table}[H]
+\caption{キャプション名．}
+\label{tab:name}
+\begin{tabular}{c|c|c}
+ 列1 &amp; 列2 &amp; 列3 \\ \hline
+ 値A &amp; 値B &amp; 値C \\
+\end{tabular}
+\centering
+\end{table}</code></pre>
+        <p>列指定の意味：</p>
+        <table>
+          <thead><tr><th>指定</th><th>意味</th></tr></thead>
+          <tbody>
+            <tr><td><code>c</code></td><td>中央揃え</td></tr>
+            <tr><td><code>l</code></td><td>左揃え</td></tr>
+            <tr><td><code>r</code></td><td>右揃え</td></tr>
+            <tr><td><code>|</code></td><td>縦線</td></tr>
+            <tr><td><code>||</code></td><td>二重縦線</td></tr>
+          </tbody>
+        </table>
+        <p><code>\hline</code> で横線、<code>&amp;</code> で列区切り、<code>\\</code> で行末です。</p>
+        <div class="note"><p><code>[H]</code> は <code>float</code> パッケージが必要です。表をソースコードと同じ位置に強制配置します。</p></div>
+      </section>
+
+    </div><!-- /tab-practice -->
 
   </div><!-- /subpage -->
 
